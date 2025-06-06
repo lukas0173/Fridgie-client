@@ -37,3 +37,9 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+### ReactNative template
+# React Native Stack Base
+
+.expo
+__generated__
+
