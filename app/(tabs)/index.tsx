@@ -1,39 +1,31 @@
-import React, { useState } from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    SafeAreaView,
-    ScrollView,
-    TouchableOpacity,
-    StatusBar,
-} from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons'; // Using Expo for icons
+import React, {useState} from 'react';
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
+import {Feather, Ionicons} from '@expo/vector-icons'; // Using Expo for icons
 
 // --- MOCK DATA ---
 // This data simulates what you would fetch from your backend API.
 
 const expiringItems = [
-    { id: '1', name: 'Sữa Vinamilk', expiry: 'Tomorrow' },
-    { id: '2', name: 'Sữa Vinamilk', expiry: 'Tomorrow' },
-    { id: '3', name: 'Sữa Vinamilk', expiry: 'Tomorrow' },
-    { id: '4', name: 'Sữa Vinamilk', expiry: 'Tomorrow' },
-    { id: '5', name: 'Sữa Vinamilk', expiry: '2 days' },
+    {id: '1', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
+    {id: '2', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
+    {id: '3', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
+    {id: '4', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
+    {id: '5', name: 'Sữa Vinamilk', expiry: '2 days'},
 ];
 
 const inventoryItems = [
-    { id: 'inv1', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed' },
-    { id: 'inv2', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed' },
-    { id: 'inv3', name: 'Sữa Vinamilk', expiry: '5 days', category: 'Fruits/Vegetables' },
-    { id: 'inv4', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed' },
-    { id: 'inv5', name: 'Sữa Vinamilk', expiry: '3 days', category: 'Condiments' },
-    { id: 'inv6', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed' },
-    { id: 'inv7', name: 'Sữa Vinamilk', expiry: '1 day', category: 'Canned/Packed' },
-    { id: 'inv8', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Fruits/Vegetables' },
-    { id: 'inv9', name: 'Sữa Vinamilk', expiry: '8 days', category: 'Canned/Packed' },
-    { id: 'inv10', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed' },
-    { id: 'inv11', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Condiments' },
-    { id: 'inv12', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed' },
+    {id: 'inv1', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
+    {id: 'inv2', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
+    {id: 'inv3', name: 'Sữa Vinamilk', expiry: '5 days', category: 'Fruits/Vegetables'},
+    {id: 'inv4', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
+    {id: 'inv5', name: 'Sữa Vinamilk', expiry: '3 days', category: 'Condiments'},
+    {id: 'inv6', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
+    {id: 'inv7', name: 'Sữa Vinamilk', expiry: '1 day', category: 'Canned/Packed'},
+    {id: 'inv8', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Fruits/Vegetables'},
+    {id: 'inv9', name: 'Sữa Vinamilk', expiry: '8 days', category: 'Canned/Packed'},
+    {id: 'inv10', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
+    {id: 'inv11', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Condiments'},
+    {id: 'inv12', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
 ];
 
 const inventoryCategories = ['All', 'Canned/Packed', 'Fruits/Vegetables', 'Condiments'];
@@ -41,19 +33,34 @@ const inventoryCategories = ['All', 'Canned/Packed', 'Fruits/Vegetables', 'Condi
 // --- UI COMPONENTS ---
 
 // A reusable component for each item in the lists
-const ItemCard = ({ name, expiry }) => (
+const ItemCard = ({name, expiry}) => (
     <TouchableOpacity style={styles.itemCard}>
         <View style={styles.itemIconBackground}>
-            <Ionicons name="pint-outline" size={32} color="#8A8A8D" />
+            <Ionicons name="pint-outline" size={32} color="#8A8A8D"/>
         </View>
         <Text style={styles.itemName}>{name}</Text>
         <Text style={styles.itemExpiry}>{expiry}</Text>
     </TouchableOpacity>
 );
 
+// The Expiration options
+const TabExpirationOptions = ({activeStatusTab, target, setActiveStatusTab}: {
+    activeStatusTab: string,
+    target: string,
+    setActiveStatusTab: any
+}) => <TouchableOpacity
+    style={[styles.statusTab, activeStatusTab === target && styles.activeStatusTab]}
+    onPress={() => setActiveStatusTab(target)}
+>
+    <Text
+        style={[styles.statusTabText, activeStatusTab === target && styles.activeStatusTabText]}>
+        Critical
+    </Text>
+</TouchableOpacity>
+
 // The main Home Screen Component
 const HomeScreen = () => {
-    const [activeStatusTab, setActiveStatusTab] = useState('Warning');
+    const [activeStatusTab, setActiveStatusTab] = useState('Critical');
     const [activeCategory, setActiveCategory] = useState('All');
 
     const filteredInventory = inventoryItems.filter(item =>
@@ -67,25 +74,24 @@ const HomeScreen = () => {
                 <View style={styles.header}>
                     <Text style={styles.headerDate}>May 20</Text>
                     <TouchableOpacity>
-                        <Feather name="search" size={24} color="#333" />
+                        <Feather name="search" size={24} color="#333"/>
                     </TouchableOpacity>
                 </View>
 
                 {/* --- EXPIRATION STATUS TABS --- */}
                 <View style={styles.statusTabsContainer}>
-                    <TouchableOpacity
-                        style={[styles.statusTab, activeStatusTab === 'Critical' && styles.activeStatusTab]}
-                        onPress={() => setActiveStatusTab('Critical')}
-                    >
-                        <Text style={[styles.statusTabText, activeStatusTab === 'Critical' && styles.activeStatusTabText]}>
-                            Critical
-                        </Text>
-                    </TouchableOpacity>
+                    <TabExpirationOptions activeStatusTab={activeStatusTab} target={"Critical"}
+                                          setActiveStatusTab={() => setActiveStatusTab("Critical")}/>
+                    <TabExpirationOptions activeStatusTab={activeStatusTab} target={"Warning"}
+                                          setActiveStatusTab={() => setActiveStatusTab("Warning")}/>
+                    <TabExpirationOptions activeStatusTab={activeStatusTab} target={"Outdated"}
+                                          setActiveStatusTab={() => setActiveStatusTab("Outdated")}/>
                     <TouchableOpacity
                         style={[styles.statusTab, activeStatusTab === 'Warning' && styles.activeStatusTab]}
                         onPress={() => setActiveStatusTab('Warning')}
                     >
-                        <Text style={[styles.statusTabText, activeStatusTab === 'Warning' && styles.activeStatusTabText]}>
+                        <Text
+                            style={[styles.statusTabText, activeStatusTab === 'Warning' && styles.activeStatusTabText]}>
                             Warning
                         </Text>
                     </TouchableOpacity>
@@ -93,7 +99,8 @@ const HomeScreen = () => {
                         style={[styles.statusTab, activeStatusTab === 'Outdated' && styles.activeStatusTab]}
                         onPress={() => setActiveStatusTab('Outdated')}
                     >
-                        <Text style={[styles.statusTabText, activeStatusTab === 'Outdated' && styles.activeStatusTabText]}>
+                        <Text
+                            style={[styles.statusTabText, activeStatusTab === 'Outdated' && styles.activeStatusTabText]}>
                             Outdated
                         </Text>
                     </TouchableOpacity>
@@ -104,13 +111,13 @@ const HomeScreen = () => {
                     <View style={styles.expiringHeader}>
                         <Text style={styles.expiringTitle}>4 Items</Text>
                         <View style={styles.expiringTime}>
-                            <Ionicons name="time-outline" size={16} color="#8A8A8D" />
+                            <Ionicons name="time-outline" size={16} color="#8A8A8D"/>
                             <Text style={styles.expiringTimeText}>1 to 3 days</Text>
                         </View>
                     </View>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
                         {expiringItems.map(item => (
-                            <ItemCard key={item.id} name={item.name} expiry={item.expiry} />
+                            <ItemCard key={item.id} name={item.name} expiry={item.expiry}/>
                         ))}
                     </ScrollView>
                 </View>
@@ -126,7 +133,8 @@ const HomeScreen = () => {
                                 style={[styles.categoryChip, activeCategory === category && styles.activeCategoryChip]}
                                 onPress={() => setActiveCategory(category)}
                             >
-                                <Text style={[styles.categoryChipText, activeCategory === category && styles.activeCategoryChipText]}>
+                                <Text
+                                    style={[styles.categoryChipText, activeCategory === category && styles.activeCategoryChipText]}>
                                     {category}
                                 </Text>
                             </TouchableOpacity>
@@ -136,7 +144,7 @@ const HomeScreen = () => {
                     {/* Inventory Grid */}
                     <View style={styles.inventoryGrid}>
                         {filteredInventory.map(item => (
-                            <ItemCard key={item.id} name={item.name} expiry={item.expiry} />
+                            <ItemCard key={item.id} name={item.name} expiry={item.expiry}/>
                         ))}
                     </View>
                 </View>
@@ -145,14 +153,14 @@ const HomeScreen = () => {
             {/* --- BOTTOM NAVIGATION --- */}
             <View style={styles.bottomNav}>
                 <TouchableOpacity style={styles.navButton}>
-                    <Ionicons name="home" size={26} color="#4CAF50" />
+                    <Ionicons name="home" size={26} color="#4CAF50"/>
                     <Text style={styles.navTextActive}>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.addButton}>
-                    <Feather name="plus" size={32} color="#FFF" />
+                    <Feather name="plus" size={32} color="#FFF"/>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.navButton}>
-                    <Ionicons name="settings-outline" size={26} color="#8A8A8D" />
+                    <Ionicons name="settings-outline" size={26} color="#8A8A8D"/>
                     <Text style={styles.navText}>Settings</Text>
                 </TouchableOpacity>
             </View>
@@ -197,7 +205,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         margin: 2,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
+        shadowOffset: {width: 0, height: 1},
         shadowOpacity: 0.1,
         shadowRadius: 3,
         elevation: 3,
@@ -330,7 +338,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         bottom: 25,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
