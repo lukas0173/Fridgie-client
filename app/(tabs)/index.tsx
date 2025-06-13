@@ -2,16 +2,13 @@ import React, {useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {Feather, Ionicons} from '@expo/vector-icons'; // Using Expo for icons
 
+import {ItemCard, TabExpirationOptions} from "@/components/pages/Home/Components.Home";
+import ExpirationStatusBar from "@/components/pages/Home/ExpirationStatusBar";
+import ExpiringHorizontalList from "@/components/pages/Home/ExpiringHorizontalList";
+
 // --- MOCK DATA ---
 // This data simulates what you would fetch from your backend API.
 
-const expiringItems = [
-    {id: '1', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
-    {id: '2', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
-    {id: '3', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
-    {id: '4', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
-    {id: '5', name: 'Sữa Vinamilk', expiry: '2 days'},
-];
 
 const inventoryItems = [
     {id: 'inv1', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
@@ -29,34 +26,6 @@ const inventoryItems = [
 ];
 
 const inventoryCategories = ['All', 'Canned/Packed', 'Fruits/Vegetables', 'Condiments'];
-
-// --- UI COMPONENTS ---
-
-// A reusable component for each item in the lists
-const ItemCard = ({name, expiry}) => (
-    <TouchableOpacity style={styles.itemCard}>
-        <View style={styles.itemIconBackground}>
-            <Ionicons name="pint-outline" size={32} color="#8A8A8D"/>
-        </View>
-        <Text style={styles.itemName}>{name}</Text>
-        <Text style={styles.itemExpiry}>{expiry}</Text>
-    </TouchableOpacity>
-);
-
-// The Expiration options
-const TabExpirationOptions = ({activeStatusTab, target, setActiveStatusTab}: {
-    activeStatusTab: string,
-    target: string,
-    setActiveStatusTab: any
-}) => <TouchableOpacity
-    style={[styles.statusTab, activeStatusTab === target && styles.activeStatusTab]}
-    onPress={() => setActiveStatusTab(target)}
->
-    <Text
-        style={[styles.statusTabText, activeStatusTab === target && styles.activeStatusTabText]}>
-        {target}
-    </Text>
-</TouchableOpacity>
 
 // The main Home Screen Component
 const HomeScreen = () => {
@@ -79,30 +48,10 @@ const HomeScreen = () => {
                 </View>
 
                 {/* --- EXPIRATION STATUS TABS --- */}
-                <View style={styles.statusTabsContainer}>
-                    <TabExpirationOptions activeStatusTab={activeStatusTab} target={"Critical"}
-                                          setActiveStatusTab={() => setActiveStatusTab("Critical")}/>
-                    <TabExpirationOptions activeStatusTab={activeStatusTab} target={"Warning"}
-                                          setActiveStatusTab={() => setActiveStatusTab("Warning")}/>
-                    <TabExpirationOptions activeStatusTab={activeStatusTab} target={"Outdated"}
-                                          setActiveStatusTab={() => setActiveStatusTab("Outdated")}/>
-                </View>
+                <ExpirationStatusBar activeStatusTab={activeStatusTab} setActiveStatusTab = {setActiveStatusTab}/>
 
                 {/* --- EXPIRING ITEMS HORIZONTAL LIST --- */}
-                <View style={styles.expiringSection}>
-                    <View style={styles.expiringHeader}>
-                        <Text style={styles.expiringTitle}>4 Items</Text>
-                        <View style={styles.expiringTime}>
-                            <Ionicons name="time-outline" size={16} color="#8A8A8D"/>
-                            <Text style={styles.expiringTimeText}>1 to 3 days</Text>
-                        </View>
-                    </View>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-                        {expiringItems.map(item => (
-                            <ItemCard key={item.id} name={item.name} expiry={item.expiry}/>
-                        ))}
-                    </ScrollView>
-                </View>
+                <ExpiringHorizontalList />
 
                 {/* --- INVENTORY SECTION --- */}
                 <View style={styles.inventorySection}>
@@ -169,59 +118,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
     },
-    statusTabsContainer: {
-        flexDirection: 'row',
-        backgroundColor: '#E0E0E0',
-        borderRadius: 8,
-        marginHorizontal: 20,
-        overflow: 'hidden',
-    },
-    statusTab: {
-        flex: 1,
-        paddingVertical: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    activeStatusTab: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 8,
-        margin: 2,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 1},
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 3,
-    },
-    statusTabText: {
-        color: '#666',
-        fontWeight: '600',
-    },
-    activeStatusTabText: {
-        color: '#333',
-    },
-    expiringSection: {
-        marginTop: 25,
-    },
-    expiringHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        marginBottom: 10,
-    },
-    expiringTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#333',
-    },
-    expiringTime: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    expiringTimeText: {
-        marginLeft: 5,
-        color: '#8A8A8D',
-    },
     horizontalScroll: {
         paddingLeft: 20,
     },
@@ -262,29 +158,6 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         paddingHorizontal: 10,
-    },
-    itemCard: {
-        alignItems: 'center',
-        margin: 8,
-        width: 100, // Adjust width as needed for your design
-    },
-    itemIconBackground: {
-        backgroundColor: '#E8E8E8',
-        borderRadius: 12,
-        width: 80,
-        height: 80,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 8,
-    },
-    itemName: {
-        color: '#333',
-        fontWeight: '500',
-        textAlign: 'center',
-    },
-    itemExpiry: {
-        color: '#8A8A8D',
-        fontSize: 12,
     },
     bottomNav: {
         position: 'absolute',
