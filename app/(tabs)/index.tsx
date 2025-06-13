@@ -1,41 +1,13 @@
 import React, {useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {Feather, Ionicons} from '@expo/vector-icons'; // Using Expo for icons
-
-import {ItemCard, TabExpirationOptions} from "@/components/pages/Home/Components.Home";
 import ExpirationStatusBar from "@/components/pages/Home/ExpirationStatusBar";
 import ExpiringHorizontalList from "@/components/pages/Home/ExpiringHorizontalList";
-
-// --- MOCK DATA ---
-// This data simulates what you would fetch from your backend API.
-
-
-const inventoryItems = [
-    {id: 'inv1', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
-    {id: 'inv2', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
-    {id: 'inv3', name: 'Sữa Vinamilk', expiry: '5 days', category: 'Fruits/Vegetables'},
-    {id: 'inv4', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
-    {id: 'inv5', name: 'Sữa Vinamilk', expiry: '3 days', category: 'Condiments'},
-    {id: 'inv6', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
-    {id: 'inv7', name: 'Sữa Vinamilk', expiry: '1 day', category: 'Canned/Packed'},
-    {id: 'inv8', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Fruits/Vegetables'},
-    {id: 'inv9', name: 'Sữa Vinamilk', expiry: '8 days', category: 'Canned/Packed'},
-    {id: 'inv10', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
-    {id: 'inv11', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Condiments'},
-    {id: 'inv12', name: 'Sữa Vinamilk', expiry: 'Tomorrow', category: 'Canned/Packed'},
-];
-
-const inventoryCategories = ['All', 'Canned/Packed', 'Fruits/Vegetables', 'Condiments'];
+import InventoryList from "@/components/pages/Home/InventoryList";
 
 // The main Home Screen Component
 const HomeScreen = () => {
     const [activeStatusTab, setActiveStatusTab] = useState('Critical');
-    const [activeCategory, setActiveCategory] = useState('All');
-
-    const filteredInventory = inventoryItems.filter(item =>
-        activeCategory === 'All' || item.category === activeCategory
-    );
-
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -48,37 +20,13 @@ const HomeScreen = () => {
                 </View>
 
                 {/* --- EXPIRATION STATUS TABS --- */}
-                <ExpirationStatusBar activeStatusTab={activeStatusTab} setActiveStatusTab = {setActiveStatusTab}/>
+                <ExpirationStatusBar activeStatusTab={activeStatusTab} setActiveStatusTab={setActiveStatusTab}/>
 
                 {/* --- EXPIRING ITEMS HORIZONTAL LIST --- */}
-                <ExpiringHorizontalList />
+                <ExpiringHorizontalList/>
 
                 {/* --- INVENTORY SECTION --- */}
-                <View style={styles.inventorySection}>
-                    <Text style={styles.sectionTitle}>Inventory</Text>
-                    {/* Category Filters */}
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-                        {inventoryCategories.map(category => (
-                            <TouchableOpacity
-                                key={category}
-                                style={[styles.categoryChip, activeCategory === category && styles.activeCategoryChip]}
-                                onPress={() => setActiveCategory(category)}
-                            >
-                                <Text
-                                    style={[styles.categoryChipText, activeCategory === category && styles.activeCategoryChipText]}>
-                                    {category}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-
-                    {/* Inventory Grid */}
-                    <View style={styles.inventoryGrid}>
-                        {filteredInventory.map(item => (
-                            <ItemCard key={item.id} name={item.name} expiry={item.expiry}/>
-                        ))}
-                    </View>
-                </View>
+                <InventoryList/>
             </ScrollView>
 
             {/* --- BOTTOM NAVIGATION --- */}
@@ -102,6 +50,7 @@ const HomeScreen = () => {
 // --- STYLES ---
 const styles = StyleSheet.create({
     container: {
+        marginHorizontal: 20,
         flex: 1,
         backgroundColor: '#F0F2F5',
     },
@@ -109,7 +58,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 20,
         paddingTop: 20,
         paddingBottom: 10,
     },
@@ -117,47 +65,6 @@ const styles = StyleSheet.create({
         fontSize: 34,
         fontWeight: 'bold',
         color: '#333',
-    },
-    horizontalScroll: {
-        paddingLeft: 20,
-    },
-    inventorySection: {
-        marginTop: 30,
-        paddingBottom: 100, // To avoid being covered by the nav bar
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#333',
-        paddingHorizontal: 20,
-        marginBottom: 15,
-    },
-    categoryScroll: {
-        paddingLeft: 20,
-        marginBottom: 20,
-    },
-    categoryChip: {
-        backgroundColor: '#E0E0E0',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 20,
-        marginRight: 10,
-    },
-    activeCategoryChip: {
-        backgroundColor: '#4CAF50',
-    },
-    categoryChipText: {
-        color: '#333',
-        fontWeight: '500',
-    },
-    activeCategoryChipText: {
-        color: '#FFFFFF',
-    },
-    inventoryGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        paddingHorizontal: 10,
     },
     bottomNav: {
         position: 'absolute',

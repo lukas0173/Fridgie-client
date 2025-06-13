@@ -34,10 +34,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#E0E0E0',
         borderRadius: 8,
-        marginHorizontal: 20,
         overflow: 'hidden',
     },
-
 
     statusTab: {
         flex: 1,

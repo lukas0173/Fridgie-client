@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     itemCard: {
         alignItems: 'center',
         margin: 8,
-        width: 100, // Adjust width as needed for your design
+        width: 100,
     },
     itemIconBackground: {
         backgroundColor: '#E8E8E8',

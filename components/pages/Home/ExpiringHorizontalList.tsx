@@ -21,7 +21,7 @@ const ExpiringHorizontalList = () => {
                 <Text style={styles.expiringTimeText}>1 to 3 days</Text>
             </View>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {expiringItems.map(item => (
                 <ItemCard key={item.id} name={item.name} expiry={item.expiry}/>
             ))}
@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 20,
         marginBottom: 10,
     },
     expiringTitle: {
