@@ -1,45 +1,145 @@
-import { Tabs } from 'expo-router';
+import {Tabs} from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Feather, Ionicons} from "@expo/vector-icons";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import {IconSymbol} from '@/components/ui/IconSymbol';
+
+// --- Custom Tab Bar Component ---
+const CustomTabBar = ({state, descriptors, navigation}: any) => {
+    return (
+        <View style={styles.tabBarContainer}>
+            {state.routes.map((route: any, index: any) => {
+                const {options} = descriptors[route.key];
+                const label = options.tabBarLabel ?? options.title ?? route.name;
+                const isFocused = state.index === index;
+
+                const onPress = () => {
+                    const event = navigation.emit({
+                        type: 'tabPress',
+                        target: route.key,
+                        canPreventDefault: true,
+                    });
+
+                    if (!isFocused && !event.defaultPrevented) {
+                        navigation.navigate(route.name, route.params);
+                    }
+                };
+
+                const onLongPress = () => {
+                    navigation.emit({
+                        type: 'tabLongPress',
+                        target: route.key,
+                    });
+                };
+
+                // This renders the Home and Settings icons.
+                // We'll render the add button separately.
+                if (index === 0 || index === 1) {
+                    return (
+                        <TouchableOpacity
+                            key={route.key}
+                            accessibilityRole="button"
+                            accessibilityState={isFocused ? {selected: true} : {}}
+                            accessibilityLabel={options.tabBarAccessibilityLabel}
+                            testID={options.tabBarTestID}
+                            onPress={onPress}
+                            onLongPress={onLongPress}
+                            style={
+                                index === 0 ? {
+                                    paddingRight: 20,
+                                    ...styles.navButton
+                                }: {
+                                    paddingLeft: 20,
+                                    ...styles.navButton
+                                }
+                            }
+                        >
+                            <Ionicons
+                                name={label === 'Home' ? (isFocused ? 'home' : 'home-outline') : (isFocused ? 'settings' : 'settings-outline')}
+                                size={26}
+                                color={isFocused ? '#4CAF50' : '#8A8A8D'}
+                            />
+                            <Text style={{color: isFocused ? '#4CAF50' : '#8A8A8D', fontSize: 12}}>
+                                {label}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                }
+
+                return null;
+            })}
+            {/* --- Floating Add Button --- */}
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => {
+                    console.log('Add button pressed!');
+                }}
+            >
+                <Feather name="plus" size={32} color="#FFF"/>
+            </TouchableOpacity>
+        </View>
+    );
+}
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+    return (
+        <Tabs
+            tabBar={(props) => <CustomTabBar {...props}/>}
+            screenOptions={{
+                headerShown: false,
+            }}>
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: 'Home',
+                    tabBarIcon: ({color}) => <IconSymbol size={28} name="house.fill" color={color}/>,
+                }}
+            />
+            <Tabs.Screen
+                name="explore"
+                options={{
+                    title: 'Explore',
+                    tabBarIcon: ({color}) => <IconSymbol size={28} name="paperplane.fill" color={color}/>,
+                }}
+            />
+        </Tabs>
+    );
 }
+
+const styles = StyleSheet.create({
+    tabBarContainer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 90,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'flex-start',
+        backgroundColor: '#FFFFFF',
+        borderTopWidth: 1,
+        borderTopColor: '#EFEFEF',
+        paddingTop: 10,
+    },
+    navButton: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    addButton: {
+        position: 'absolute',
+        alignSelf: 'center',
+        top: -30, // Elevates the button
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: '#4CAF50',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+});

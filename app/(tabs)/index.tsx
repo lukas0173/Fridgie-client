@@ -28,21 +28,6 @@ const HomeScreen = () => {
                 {/* --- INVENTORY SECTION --- */}
                 <InventoryList/>
             </ScrollView>
-
-            {/* --- BOTTOM NAVIGATION --- */}
-            <View style={styles.bottomNav}>
-                <TouchableOpacity style={styles.navButton}>
-                    <Ionicons name="home" size={26} color="#4CAF50"/>
-                    <Text style={styles.navTextActive}>Home</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.addButton}>
-                    <Feather name="plus" size={32} color="#FFF"/>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navButton}>
-                    <Ionicons name="settings-outline" size={26} color="#8A8A8D"/>
-                    <Text style={styles.navText}>Settings</Text>
-                </TouchableOpacity>
-            </View>
         </SafeAreaView>
     );
 };
