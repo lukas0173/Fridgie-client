@@ -54,7 +54,7 @@ const TabExpirationOptions = ({activeStatusTab, target, setActiveStatusTab}: {
 >
     <Text
         style={[styles.statusTabText, activeStatusTab === target && styles.activeStatusTabText]}>
-        Critical
+        {target}
     </Text>
 </TouchableOpacity>
 
@@ -86,24 +86,6 @@ const HomeScreen = () => {
                                           setActiveStatusTab={() => setActiveStatusTab("Warning")}/>
                     <TabExpirationOptions activeStatusTab={activeStatusTab} target={"Outdated"}
                                           setActiveStatusTab={() => setActiveStatusTab("Outdated")}/>
-                    <TouchableOpacity
-                        style={[styles.statusTab, activeStatusTab === 'Warning' && styles.activeStatusTab]}
-                        onPress={() => setActiveStatusTab('Warning')}
-                    >
-                        <Text
-                            style={[styles.statusTabText, activeStatusTab === 'Warning' && styles.activeStatusTabText]}>
-                            Warning
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.statusTab, activeStatusTab === 'Outdated' && styles.activeStatusTab]}
-                        onPress={() => setActiveStatusTab('Outdated')}
-                    >
-                        <Text
-                            style={[styles.statusTabText, activeStatusTab === 'Outdated' && styles.activeStatusTabText]}>
-                            Outdated
-                        </Text>
-                    </TouchableOpacity>
                 </View>
 
                 {/* --- EXPIRING ITEMS HORIZONTAL LIST --- */}
