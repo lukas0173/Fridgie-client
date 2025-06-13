@@ -1,7 +1,7 @@
 import React, { useState} from "react"
 import {View, Text, ScrollView, TouchableOpacity, StyleSheet} from "react-native";
 
-import {ItemCard} from "@/components/pages/Home/Components.Home";
+import {ItemCard} from "@/app/(tabs)/(home)/Components.Home";
 
 const inventoryCategories = ['All', 'Canned/Packed', 'Fruits/Vegetables', 'Condiments'];
 

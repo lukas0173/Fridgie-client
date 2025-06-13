@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
 import {Feather, Ionicons} from '@expo/vector-icons'; // Using Expo for icons
-import ExpirationStatusBar from "@/components/pages/Home/ExpirationStatusBar";
-import ExpiringHorizontalList from "@/components/pages/Home/ExpiringHorizontalList";
-import InventoryList from "@/components/pages/Home/InventoryList";
+import ExpirationStatusBar from "@/app/(tabs)/(home)/ExpirationStatusBar";
+import ExpiringHorizontalList from "@/app/(tabs)/(home)/ExpiringHorizontalList";
+import InventoryList from "@/app/(tabs)/(home)/InventoryList";
 
-// The main Home Screen Component
+// The main (home) Screen Component
 const HomeScreen = () => {
     const [activeStatusTab, setActiveStatusTab] = useState('Critical');
     return (

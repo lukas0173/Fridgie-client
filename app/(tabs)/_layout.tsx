@@ -33,7 +33,7 @@ const CustomTabBar = ({state, descriptors, navigation}: any) => {
                     });
                 };
 
-                // This renders the Home and Settings icons.
+                // This renders the (home) and Settings icons.
                 // We'll render the add button separately.
                 if (index === 0 || index === 1) {
                     return (
@@ -56,7 +56,7 @@ const CustomTabBar = ({state, descriptors, navigation}: any) => {
                             }
                         >
                             <Ionicons
-                                name={label === 'Home' ? (isFocused ? 'home' : 'home-outline') : (isFocused ? 'settings' : 'settings-outline')}
+                                name={label === '(home)' ? (isFocused ? 'home' : 'home-outline') : (isFocused ? 'settings' : 'settings-outline')}
                                 size={26}
                                 color={isFocused ? '#4CAF50' : '#8A8A8D'}
                             />
@@ -90,14 +90,14 @@ export default function TabLayout() {
                 headerShown: false,
             }}>
             <Tabs.Screen
-                name="index"
+                name="(home)"
                 options={{
-                    title: 'Home',
+                    title: "Home",
                     tabBarIcon: ({color}) => <IconSymbol size={28} name="house.fill" color={color}/>,
                 }}
             />
             <Tabs.Screen
-                name="explore"
+                name="Explore/index"
                 options={{
                     title: 'Explore',
                     tabBarIcon: ({color}) => <IconSymbol size={28} name="paperplane.fill" color={color}/>,
