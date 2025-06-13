@@ -1,17 +1,62 @@
 import React from "react";
-import {Text, View, ScrollView, StyleSheet} from "react-native";
+import {ScrollView, StyleSheet, Text, View} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 
-import {ItemCard} from "@/app/(tabs)/(home)/Components.Home";
+import {Item} from "@/app/(tabs)/(home)/types";
+import ItemCard from "@/app/(tabs)/(home)/ItemCard";
 
-const expiringItems = [
-    {id: '1', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
-    {id: '2', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
-    {id: '3', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
-    {id: '4', name: 'Sữa Vinamilk', expiry: 'Tomorrow'},
-    {id: '5', name: 'Sữa Vinamilk', expiry: '2 days'},
+const expiringItems: Item[] = [
+    {
+        id: 'exp1',
+        name: 'Sữa Vinamilk',
+        expiry: 'Tomorrow',
+        category: 'Canned/Packed',
+        status: 'Critical',
+        dayAdded: '10/05/2025',
+        dayExpired: '21/05/2025',
+        quantity: 1
+    },
+    {
+        id: 'exp2',
+        name: 'Bread',
+        expiry: '2 days',
+        category: 'Canned/Packed',
+        status: 'Critical',
+        dayAdded: '19/05/2025',
+        dayExpired: '22/05/2025',
+        quantity: 1
+    },
+    {
+        id: 'exp3',
+        name: 'Chicken Breast',
+        expiry: '2 days',
+        category: 'Fruits/Vegetables',
+        status: 'Critical',
+        dayAdded: '19/05/2025',
+        dayExpired: '22/05/2025',
+        quantity: 2
+    },
+    {
+        id: 'exp4',
+        name: 'Yogurt',
+        expiry: '3 days',
+        category: 'Canned/Packed',
+        status: 'Warning',
+        dayAdded: '18/05/2025',
+        dayExpired: '23/05/2025',
+        quantity: 4
+    },
+    {
+        id: 'exp5',
+        name: 'Salad Mix',
+        expiry: '3 days',
+        category: 'Fruits/Vegetables',
+        status: 'Warning',
+        dayAdded: '18/05/2025',
+        dayExpired: '23/05/2025',
+        quantity: 1
+    },
 ];
-
 const ExpiringHorizontalList = () => {
     return <View style={styles.expiringSection}>
         <View style={styles.expiringHeader}>
@@ -23,7 +68,7 @@ const ExpiringHorizontalList = () => {
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {expiringItems.map(item => (
-                <ItemCard key={item.id} name={item.name} expiry={item.expiry}/>
+                <ItemCard key={item.id} item={item}/>
             ))}
         </ScrollView>
     </View>

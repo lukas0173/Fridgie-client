@@ -1,19 +1,33 @@
 import React from "react";
-import {TouchableOpacity, View, Text, StyleSheet} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
+import {Item} from "@/app/(tabs)/(home)/types";
 
 // A reusable component for each item in the lists
-export const ItemCard = ({name, expiry}: {name: string, expiry: string}) => (
-    <TouchableOpacity style={styles.itemCard}>
+const ItemCard = ({item}: { item: Item }) => {
+
+    const router = useRouter();
+
+    const handlePress = () => {
+        // Navigate to the details screen, passing the item object as a parameter.
+        router.push({
+            pathname: "/(tabs)/(home)/details",
+            params: {item: JSON.stringify(item)},
+        });
+    };
+
+    return <TouchableOpacity style={styles.itemCard} onPress={handlePress}>
         <View style={styles.itemIconBackground}>
             <Ionicons name="pint-outline" size={32} color="#8A8A8D"/>
         </View>
-        <Text style={styles.itemName}>{name}</Text>
-        <Text style={styles.itemExpiry}>{expiry}</Text>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemExpiry}>{item.expiry}</Text>
     </TouchableOpacity>
-);
+}
 
-// The Expiration options
+export default ItemCard
+
 
 const styles = StyleSheet.create({
     itemCard: {
