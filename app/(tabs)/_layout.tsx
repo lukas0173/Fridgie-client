@@ -56,7 +56,7 @@ const CustomTabBar = ({state, descriptors, navigation}: any) => {
                             }
                         >
                             <Ionicons
-                                name={label === '(home)' ? (isFocused ? 'home' : 'home-outline') : (isFocused ? 'settings' : 'settings-outline')}
+                                name={label === 'Home' ? (isFocused ? 'home' : 'home-outline') : (isFocused ? 'settings' : 'settings-outline')}
                                 size={26}
                                 color={isFocused ? '#4CAF50' : '#8A8A8D'}
                             />
@@ -97,9 +97,9 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="Explore/index"
+                name="settings"
                 options={{
-                    title: 'Explore',
+                    title: 'settings',
                     tabBarIcon: ({color}) => <IconSymbol size={28} name="paperplane.fill" color={color}/>,
                 }}
             />
