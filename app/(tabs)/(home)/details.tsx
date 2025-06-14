@@ -16,7 +16,6 @@ const DetailRow = ({ icon, label, value }: { icon: React.ReactNode; label: strin
 );
 
 const ItemDetailsScreen = () => {
-    const router = useRouter();
     const params = useLocalSearchParams();
     const { item: itemString } = params;
 
@@ -50,7 +49,6 @@ const ItemDetailsScreen = () => {
                 return { backgroundColor: '#4CAF50' }; // Default to green
         }
     };
-
 
     return (
         <SafeAreaView style={styles.container}>
@@ -116,13 +114,14 @@ const ItemDetailsScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F0F2F5', // Match home screen background
+        backgroundColor: '#F0F2F5',
     },
     mainContent: {
-        paddingHorizontal: 20,
+        marginHorizontal: 20,
     },
     imageContainer: {
-        height: 250,
+        width: "100%",
+        aspectRatio: 1,
         backgroundColor: '#E8E8E8',
         borderRadius: 24,
         justifyContent: 'center',
@@ -134,19 +133,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 10,
     },
     itemName: {
-        fontSize: 34,
+        fontSize: 30,
         fontWeight: 'bold',
         color: '#333',
         flex: 1,
         marginRight: 10,
     },
     statusBadge: {
-        paddingVertical: 8,
+        paddingVertical: 5,
         paddingHorizontal: 16,
-        borderRadius: 12, // Reduced from 20 for a less "pill" shape
+        borderRadius: 10,
     },
     statusText: {
         color: '#FFFFFF',
@@ -154,25 +153,23 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     detailsContainer: {
-        // No background card style, as per original design
     },
     detailRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 14, // Reduced padding for a more compact look
-        // Removed border bottom
+        paddingVertical: 5,
     },
     detailRowIcon: {
-        width: 40, // To align text vertically
-        alignItems: 'center'
+        width: 40,
+        alignItems: 'flex-start'
     },
     detailLabel: {
-        fontSize: 16, // Reduced font size
-        color: '#8A8A8D', // Lighter grey for the label as per design
+        fontSize: 16,
+        color: '#8A8A8D',
         flex: 1,
     },
     detailValue: {
-        fontSize: 16, // Reduced font size
+        fontSize: 16,
         color: '#333',
         fontWeight: '500',
     },
@@ -182,12 +179,11 @@ const styles = StyleSheet.create({
         paddingBottom: 30, // More padding from bottom
         paddingTop: 10,
         gap: 15,
-        backgroundColor: '#F0F2F5', // Match background
+        backgroundColor: '#F0F2F5',
     },
     button: {
-        // flex: 1, // Removed from here
-        paddingVertical: 18,
-        borderRadius: 14, // Reduced from 28 for a more rectangular shape
+        paddingVertical: 10,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: "#000",
@@ -203,7 +199,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#4CAF50',
     },
     deleteButton: {
-        backgroundColor: '#c72c41', // Exact red from design
+        backgroundColor: '#c72c41',
     },
     buttonText: {
         color: '#FFFFFF',
