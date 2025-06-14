@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { Stack } from 'expo-router';
-import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, Feather} from '@expo/vector-icons';
 
 // Reusable component for section headers
 const SectionHeader = ({ title }: { title: string }) => (
@@ -117,7 +117,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: '#8A8A8D',
-        marginTop: 25,
         marginBottom: 10,
         textTransform: 'uppercase',
     },
