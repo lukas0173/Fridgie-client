@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams, Stack } from 'expo-router';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Item } from '../../../components/pages/home/types';
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Stack, useLocalSearchParams} from 'expo-router';
+import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import {Item} from '@/components/pages/home/types';
 
 // Helper component for each row in the details list
-const DetailRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) => (
+const DetailRow = ({icon, label, value}: { icon: React.ReactNode; label: string; value: string | number }) => (
     <View style={styles.detailRow}>
         <View style={styles.detailRowIcon}>
             {icon}
@@ -17,7 +17,7 @@ const DetailRow = ({ icon, label, value }: { icon: React.ReactNode; label: strin
 
 const ItemDetailsScreen = () => {
     const params = useLocalSearchParams();
-    const { item: itemString } = params;
+    const {item: itemString} = params;
 
     // Ensure itemString is a string before parsing
     const item: Item | null = typeof itemString === 'string' ? JSON.parse(itemString) : null;
@@ -26,8 +26,8 @@ const ItemDetailsScreen = () => {
         // Handle case where item is not found or invalid
         return (
             <SafeAreaView style={styles.container}>
-                <Stack.Screen options={{ title: "Error" }} />
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Stack.Screen options={{title: "Error"}}/>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                     <Text>Item not found.</Text>
                 </View>
             </SafeAreaView>
@@ -38,27 +38,27 @@ const ItemDetailsScreen = () => {
     const getStatusStyle = (status: Item['status']) => {
         switch (status) {
             case 'Critical':
-                return { backgroundColor: '#E53935' }; // Red
+                return {backgroundColor: '#E53935'}; // Red
             case 'Warning':
-                return { backgroundColor: '#FFA726' }; // Orange
+                return {backgroundColor: '#FFA726'}; // Orange
             case 'Neutral':
-                return { backgroundColor: '#4CAF50' }; // Green
+                return {backgroundColor: '#4CAF50'}; // Green
             case 'Outdated':
-                return { backgroundColor: '#757575' }; // Grey
+                return {backgroundColor: '#757575'}; // Grey
             default:
-                return { backgroundColor: '#4CAF50' }; // Default to green
+                return {backgroundColor: '#4CAF50'}; // Default to green
         }
     };
 
     return (
         <SafeAreaView style={styles.container}>
             {/* Set the header title dynamically for this screen */}
-            <Stack.Screen options={{ title: "" , headerShadowVisible: false, headerStyle: { backgroundColor: '#F0F2F5' } }} />
+            <Stack.Screen options={{headerShown: false}}/>
 
             <View style={styles.mainContent}>
                 {/* Image Placeholder */}
                 <View style={styles.imageContainer}>
-                    <Ionicons name="pint-outline" size={128} color="#BDBDBD" />
+                    <Ionicons name="pint-outline" size={128} color="#BDBDBD"/>
                 </View>
 
                 {/* Item Name and Status */}
@@ -72,22 +72,22 @@ const ItemDetailsScreen = () => {
                 {/* Item Details List */}
                 <View style={styles.detailsContainer}>
                     <DetailRow
-                        icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                        icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
                         label="Day added"
                         value={item.dayAdded}
                     />
                     <DetailRow
-                        icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                        icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
                         label="Day expired"
                         value={item.dayExpired}
                     />
                     <DetailRow
-                        icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D" />}
+                        icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D"/>}
                         label="Category"
                         value={item.category}
                     />
                     <DetailRow
-                        icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D" />}
+                        icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D"/>}
                         label="Quantity"
                         value={item.quantity}
                     />
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F0F2F5',
+        paddingTop: 50,
     },
     mainContent: {
         marginHorizontal: 20,
@@ -152,8 +153,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 14,
     },
-    detailsContainer: {
-    },
+    detailsContainer: {},
     detailRow: {
         flexDirection: 'row',
         alignItems: 'center',
