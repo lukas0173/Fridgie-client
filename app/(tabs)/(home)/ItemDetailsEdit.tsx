@@ -1,18 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState, useRef } from 'react';
 import {
-    KeyboardAvoidingView,
-    Platform,
     SafeAreaView,
-    ScrollView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
-    View
+    View,
+    TextInput,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform
 } from 'react-native';
-import {Stack, useLocalSearchParams, useRouter} from 'expo-router';
-import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
+// Assuming 'Item' type is defined in a shared types file
 export interface Item {
     id: string;
     name: string;
@@ -23,197 +24,212 @@ export interface Item {
     quantity: number;
 }
 
-// Helper component for each editable row
-const EditableRow = ({icon, label, value, onEditPress, isEditable = true}: {
-    icon: React.ReactNode;
-    label: string;
-    value: string | number;
-    onEditPress?: () => void;
-    isEditable?: boolean
-}) => (
-    <View style={styles.detailRow}>
-        <View style={styles.detailRowIcon}>
-            {icon}
-        </View>
-        <Text style={styles.detailLabel}>{label}</Text>
-        <Text style={styles.detailValue}>{value}</Text>
-        {isEditable && (
-            <TouchableOpacity onPress={onEditPress} style={styles.editIcon}>
-                <MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D"/>
+// A component for handling editable fields, designed to be visually clean
+const EditableField = ({ label, value, icon, onSave, keyboardType = 'default' }: { label: string, value: string | number, icon: React.ReactNode, onSave: (newValue: string | number) => void, keyboardType?: 'default' | 'numeric' }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentValue, setCurrentValue] = useState(String(value));
+    const textInputRef = useRef<TextInput>(null);
+
+    const handleEditToggle = () => {
+        setIsEditing(!isEditing);
+        if (!isEditing) {
+            setTimeout(() => textInputRef.current?.focus(), 50);
+        } else {
+            onSave(currentValue);
+        }
+    };
+
+    const handleBlur = () => {
+        setIsEditing(false);
+        onSave(currentValue);
+    };
+
+    return (
+        <View style={styles.detailRow}>
+            <View style={styles.detailRowIcon}>{icon}</View>
+            <Text style={styles.detailLabel}>{label}</Text>
+            {isEditing ? (
+                <TextInput
+                    ref={textInputRef}
+                    style={styles.textInput}
+                    value={currentValue}
+                    onChangeText={setCurrentValue}
+                    editable={true}
+                    keyboardType={keyboardType}
+                    onBlur={handleBlur}
+                    returnKeyType="done"
+                />
+            ) : (
+                <Text style={styles.detailValue}>{currentValue}</Text>
+            )}
+            <TouchableOpacity onPress={handleEditToggle} style={styles.editIcon}>
+                <MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D" />
             </TouchableOpacity>
-        )}
-    </View>
-);
+        </View>
+    );
+};
 
 
-const ItemDetailsEdit = () => {
+const EditItemScreen = () => {
     const params = useLocalSearchParams();
-    const router = useRouter();
-    const {item: itemString} = params;
+    const { item: itemString } = params;
 
-    // Parse the item from navigation params
     const initialItem: Item | null = typeof itemString === 'string' ? JSON.parse(itemString) : null;
 
-    // State for holding the edited item data
+    const [originalItem, setOriginalItem] = useState<Item | null>(initialItem);
     const [item, setItem] = useState<Item | null>(initialItem);
 
-
-    if (!item) {
+    if (!item || !originalItem) {
         return (
             <SafeAreaView style={styles.container}>
-                <Stack.Screen options={{title: "Error"}}/>
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <Stack.Screen options={{ title: "Error" }} />
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <Text>Item not found.</Text>
                 </View>
             </SafeAreaView>
         );
     }
 
-    // Handlers for updating item state
-    const handleValueChange = (field: keyof Item, value: string | number) => {
+    const isModified = JSON.stringify(originalItem) !== JSON.stringify(item);
+
+    const handleFieldSave = (field: keyof Item, value: string | number) => {
         setItem(prevItem => {
             if (!prevItem) return null;
-            return {...prevItem, [field]: value};
+            if (field === 'quantity') {
+                const numValue = Number(value);
+                return { ...prevItem, [field]: isNaN(numValue) ? 0 : numValue };
+            }
+            return { ...prevItem, [field]: value };
         });
     };
 
-    const handleSave = () => {
-        console.log('Saving item:', item);
-        // Here you would typically call an API or update your global state
-        // After saving, you might want to navigate back
-        if (router.canGoBack()) {
-            router.back();
-        }
+    const handleSaveChanges = () => {
+        console.log('Saving all changes:', item);
+        setOriginalItem(item); // Update the original state
     };
 
     const getStatusStyle = (status: Item['status']) => {
         switch (status) {
-            case 'Critical':
-                return {backgroundColor: '#E53935'};
-            case 'Warning':
-                return {backgroundColor: '#FFA726'};
-            case 'Neutral':
-                return {backgroundColor: '#4CAF50'};
-            case 'Outdated':
-                return {backgroundColor: '#757575'};
-            default:
-                return {backgroundColor: '#4CAF50'};
+            case 'Critical': return { backgroundColor: '#E53935' };
+            case 'Warning': return { backgroundColor: '#FFA726' };
+            case 'Neutral': return { backgroundColor: '#4CAF50' };
+            case 'Outdated': return { backgroundColor: '#757575' };
+            default: return { backgroundColor: '#4CAF50' };
         }
     };
 
+
     return (
         <SafeAreaView style={styles.container}>
-            <Stack.Screen options={{headerShown: false}}/>
+            <Stack.Screen options={{ headerShown: false }} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={{flex: 1}}
+                style={styles.keyboardAvoidingContainer}
             >
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
-                    {/* Image Placeholder with an add icon */}
-                    <View style={styles.imageContainer}>
-                        <TouchableOpacity style={styles.addImageButton}>
-                            <Ionicons name="add" size={48} color="#FFFFFF"/>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Item Name and Status */}
-                    <View style={styles.header}>
-                        <TextInput
-                            style={styles.itemNameInput}
-                            value={item.name}
-                            onChangeText={(text) => handleValueChange('name', text)}
-                            placeholder="Item Name"
-                        />
-                        <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
-                            <Text style={styles.statusText}>{item.status}</Text>
+                    <View style={styles.contentWrapper}>
+                        {/* Image Placeholder */}
+                        <View style={styles.imageContainer}>
+                            <TouchableOpacity style={styles.addImageButton}>
+                                <Ionicons name="add" size={48} color="#FFFFFF" />
+                            </TouchableOpacity>
                         </View>
-                    </View>
 
-                    {/* Editable Item Details */}
-                    <View style={styles.detailsContainer}>
-                        <EditableRow
-                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
-                            label="Day added"
-                            value={item.dayAdded}
-                            onEditPress={() => console.log("Edit Day Added")} // Placeholder for date picker
-                        />
-                        <EditableRow
-                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
-                            label="Day expired"
-                            value={item.dayExpired}
-                            onEditPress={() => console.log("Edit Day Expired")} // Placeholder for date picker
-                        />
-                        <EditableRow
-                            icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D"/>}
-                            label="Category"
-                            value={item.category}
-                            onEditPress={() => console.log("Edit Category")} // Placeholder for category picker
-                        />
-                        {/* Special row for quantity to allow direct input */}
-                        <View style={styles.detailRow}>
-                            <View style={styles.detailRowIcon}>
-                                <MaterialCommunityIcons name="counter" size={24} color="#8A8A8D"/>
-                            </View>
-                            <Text style={styles.detailLabel}>Quantity</Text>
+                        {/* Item Name and Status Header */}
+                        <View style={styles.header}>
                             <TextInput
-                                style={styles.quantityInput}
-                                value={String(item.quantity)}
-                                onChangeText={(text) => handleValueChange('quantity', Number(text))}
+                                style={styles.itemNameInput}
+                                value={item.name}
+                                onChangeText={(text) => handleFieldSave('name', text)}
+                                placeholder="Item Name"
+                            />
+                            <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
+                                <Text style={styles.statusText}>{item.status}</Text>
+                            </View>
+                        </View>
+
+                        {/* Details section with original flat styling */}
+                        <View style={styles.detailsContainer}>
+                            <EditableField
+                                label="Day added"
+                                value={item.dayAdded}
+                                icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                                onSave={(newValue) => handleFieldSave('dayAdded', newValue)}
+                            />
+                            <EditableField
+                                label="Day expired"
+                                value={item.dayExpired}
+                                icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                                onSave={(newValue) => handleFieldSave('dayExpired', newValue)}
+                            />
+                            <EditableField
+                                label="Category"
+                                value={item.category}
+                                icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D" />}
+                                onSave={(newValue) => handleFieldSave('category', newValue)}
+                            />
+                            <EditableField
+                                label="Quantity"
+                                value={item.quantity}
+                                icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D"/>}
+                                onSave={(newValue) => handleFieldSave('quantity', newValue)}
                                 keyboardType="numeric"
                             />
                         </View>
                     </View>
+
+                    {isModified && (
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.button} onPress={handleSaveChanges}>
+                                <Text style={styles.buttonText}>Save Changes</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
                 </ScrollView>
             </KeyboardAvoidingView>
-
-            {/* Save Button */}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-                    <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-            </View>
         </SafeAreaView>
     );
 };
 
-// Styles are adapted from your details.tsx and the provided image
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F0F2F5',
-        paddingTop: 50,
+        paddingTop: Platform.OS === 'android' ? 25 : 50,
+    },
+    keyboardAvoidingContainer: {
+        flex: 1,
     },
     scrollContainer: {
+        flexGrow: 1,
+    },
+    contentWrapper: {
         paddingHorizontal: 20,
-        paddingBottom: 20,
     },
     imageContainer: {
         width: "100%",
-        aspectRatio: 1.5, // Made it a bit wider to match the reference image
+        aspectRatio: 1,
         backgroundColor: '#E8E8E8',
         borderRadius: 24,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 10,
         marginBottom: 24,
     },
     addImageButton: {
         width: 72,
         height: 72,
         borderRadius: 36,
-        backgroundColor: '#4CAF50', // Green color from your save button
+        backgroundColor: '#4CAF50',
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
         elevation: 5,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 10,
     },
     itemNameInput: {
         fontSize: 30,
@@ -221,9 +237,6 @@ const styles = StyleSheet.create({
         color: '#333',
         flex: 1,
         marginRight: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#BDBDBD',
-        paddingBottom: 5,
     },
     statusBadge: {
         paddingVertical: 5,
@@ -235,19 +248,19 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 14,
     },
+    // This container no longer has a card style
     detailsContainer: {
-        paddingBottom: 20, // Add padding to avoid button overlap
+        marginBottom: 20, // Space between fields and button
     },
     detailRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 15, // Increased padding for better touch targets
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
+        paddingVertical: 5, // Consistent padding for each row
     },
     detailRowIcon: {
         width: 40,
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        marginRight: 5,
     },
     detailLabel: {
         fontSize: 16,
@@ -258,40 +271,31 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
         fontWeight: '500',
-        marginRight: 10,
+        textAlign: 'right',
     },
-    editIcon: {
-        padding: 5,
-    },
-    quantityInput: {
+    textInput: {
+        flex: 1,
         fontSize: 16,
         color: '#333',
         fontWeight: '500',
-        borderBottomWidth: 1,
-        borderBottomColor: '#BDBDBD',
-        minWidth: 50,
         textAlign: 'right',
+        paddingVertical: 0, // Remove extra padding for better alignment
+    },
+    editIcon: {
+        padding: 5,
+        marginLeft: 10,
     },
     buttonContainer: {
         paddingHorizontal: 20,
-        paddingVertical: 20,
-        backgroundColor: '#F0F2F5', // Match background color
-        borderTopWidth: 1,
-        borderTopColor: '#E0E0E0',
+        paddingBottom: 40,
     },
     button: {
         paddingVertical: 15,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
-        elevation: 4,
-    },
-    saveButton: {
         backgroundColor: '#4CAF50',
+        elevation: 4,
     },
     buttonText: {
         color: '#FFFFFF',
@@ -300,4 +304,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ItemDetailsEdit;
+export default EditItemScreen;
