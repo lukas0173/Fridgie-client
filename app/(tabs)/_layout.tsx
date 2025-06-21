@@ -1,4 +1,4 @@
-import {Tabs} from 'expo-router';
+import {router, Tabs} from 'expo-router';
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Feather, Ionicons} from "@expo/vector-icons";
@@ -73,7 +73,7 @@ const CustomTabBar = ({state, descriptors, navigation}: any) => {
             <TouchableOpacity
                 style={styles.addButton}
                 onPress={() => {
-                    console.log('Add button pressed!');
+                    router.push("/scan")
                 }}
             >
                 <Feather name="plus" size={32} color="#FFF"/>

@@ -1,6 +1,6 @@
 import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
-import {Platform, StatusBar as RNStatusBar, View, StyleSheet} from "react-native";
-import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import {Platform, StatusBar as RNStatusBar, StyleSheet, View} from "react-native";
+import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
 import {useFonts} from 'expo-font';
 import {Stack} from 'expo-router';
 import 'react-native-reanimated';
@@ -23,7 +23,13 @@ export default function RootLayout() {
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                 <Stack>
                     <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                    <Stack.Screen name="+not-found"/>
+                    <Stack.Screen
+                        name="scan/index"
+                        options={{
+                            presentation: 'modal',
+                            headerShown: false,
+                        }}
+                    />
                 </Stack>
                 <ExpoStatusBar style="auto"/>
             </ThemeProvider>
