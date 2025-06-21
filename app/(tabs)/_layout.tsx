@@ -49,7 +49,7 @@ const CustomTabBar = ({state, descriptors, navigation}: any) => {
                                 index === 0 ? {
                                     paddingRight: 20,
                                     ...styles.navButton
-                                }: {
+                                } : {
                                     paddingLeft: 20,
                                     ...styles.navButton
                                 }
@@ -97,7 +97,7 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="settings"
+                name="settings/index"
                 options={{
                     title: 'settings',
                     tabBarIcon: ({color}) => <IconSymbol size={28} name="paperplane.fill" color={color}/>,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        height: 90,
+        height: 75,
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'flex-start',

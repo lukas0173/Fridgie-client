@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Feather} from '@expo/vector-icons'; // Using Expo for icons
 import ExpirationStatusBar from "@/app/(tabs)/(home)/ExpirationStatusBar";
 import ExpiringHorizontalList from "@/app/(tabs)/(home)/ExpiringHorizontalList";
@@ -35,7 +35,7 @@ const HomeScreen = () => {
 // --- STYLES ---
 const styles = StyleSheet.create({
     container: {
-        marginHorizontal: 20,
+        paddingHorizontal: 20,
         flex: 1,
         backgroundColor: '#F0F2F5',
     },
