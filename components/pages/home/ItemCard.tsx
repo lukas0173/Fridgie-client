@@ -2,7 +2,7 @@ import React from "react";
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
-import {Item} from "@/app/(tabs)/(home)/types";
+import {Item} from "@/components/pages/home/types";
 
 // A reusable component for each item in the lists
 const ItemCard = ({item}: { item: Item }) => {

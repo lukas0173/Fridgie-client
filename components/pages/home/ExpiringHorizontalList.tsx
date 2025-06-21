@@ -2,8 +2,8 @@ import React from "react";
 import {ScrollView, StyleSheet, Text, View} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 
-import {Item} from "@/app/(tabs)/(home)/types";
-import ItemCard from "@/app/(tabs)/(home)/ItemCard";
+import {Item} from "@/components/pages/home/types";
+import ItemCard from "@/components/pages/home/ItemCard";
 
 const expiringItems: Item[] = [
     {

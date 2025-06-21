@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Item } from './types';
+import { Item } from '../../../components/pages/home/types';
 
 // Helper component for each row in the details list
 const DetailRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) => (
