@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
     },
     closeButton: {
         position: 'absolute',
-        top: 60,
-        left: 20,
+        top: 40,
+        left: 30,
         width: 44,
         height: 44,
         borderRadius: 22,
