@@ -1,6 +1,6 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {Stack, useLocalSearchParams} from 'expo-router';
+import {router, Stack, useLocalSearchParams} from 'expo-router';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {Item} from '@/components/pages/home/types';
 
@@ -21,6 +21,14 @@ const ItemDetailsScreen = () => {
 
     // Ensure itemString is a string before parsing
     const item: Item | null = typeof itemString === 'string' ? JSON.parse(itemString) : null;
+
+    const handlePress = () => {
+        // Navigate to the details screen, passing the item object as a parameter.
+        router.push({
+            pathname: "/(tabs)/(home)/ItemDetailsEdit",
+            params: params
+        });
+    };
 
     if (!item) {
         // Handle case where item is not found or invalid
@@ -52,9 +60,6 @@ const ItemDetailsScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Set the header title dynamically for this screen */}
-            <Stack.Screen options={{headerShown: false}}/>
-
             <View style={styles.mainContent}>
                 {/* Image Placeholder */}
                 <View style={styles.imageContainer}>
@@ -97,7 +102,7 @@ const ItemDetailsScreen = () => {
             {/* Action Buttons */}
             <View style={styles.buttonContainer}>
                 <View style={{flex: 1}}>
-                    <TouchableOpacity style={[styles.button, styles.editButton]}>
+                    <TouchableOpacity style={[styles.button, styles.editButton]} onPress={handlePress}>
                         <Text style={styles.buttonText}>Edit</Text>
                     </TouchableOpacity>
                 </View>

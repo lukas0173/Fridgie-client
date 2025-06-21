@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import {Stack} from 'expo-router';
 
 export default function HomeLayout() {
     return (
@@ -6,11 +6,20 @@ export default function HomeLayout() {
             <Stack.Screen
                 name="index"
                 options={{
-                    headerShown: false // The index screen already has a custom header
+                    headerShown: false
                 }}
             />
             <Stack.Screen
-                name="details"
+                name="ItemDetailsScreen"
+                options={{
+                    headerShown: false
+                }}
+            />
+            <Stack.Screen
+                name="ItemDetailsEdit"
+                options={{
+                    headerShown: false
+                }}
             />
         </Stack>
     );

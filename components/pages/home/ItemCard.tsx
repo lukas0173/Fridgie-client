@@ -12,7 +12,7 @@ const ItemCard = ({item}: { item: Item }) => {
     const handlePress = () => {
         // Navigate to the details screen, passing the item object as a parameter.
         router.push({
-            pathname: "/(tabs)/(home)/details",
+            pathname: "/(tabs)/(home)/ItemDetailsScreen",
             params: {item: JSON.stringify(item)},
         });
     };
