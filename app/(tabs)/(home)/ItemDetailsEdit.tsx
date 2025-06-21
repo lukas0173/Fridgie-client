@@ -1,31 +1,28 @@
-import React, { useState, useRef } from 'react';
+import React, {useRef, useState} from 'react';
 import {
+    KeyboardAvoidingView,
+    Platform,
     SafeAreaView,
+    ScrollView,
     StyleSheet,
     Text,
-    TouchableOpacity,
-    View,
     TextInput,
-    ScrollView,
-    KeyboardAvoidingView,
-    Platform
+    TouchableOpacity,
+    View
 } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import {Stack, useLocalSearchParams,} from 'expo-router';
+import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 
-// Assuming 'Item' type is defined in a shared types file
-export interface Item {
-    id: string;
-    name: string;
-    status: 'Critical' | 'Warning' | 'Neutral' | 'Outdated';
-    dayAdded: string;
-    dayExpired: string;
-    category: string;
-    quantity: number;
-}
+import {Item} from "@/components/pages/home/types";
 
 // A component for handling editable fields, designed to be visually clean
-const EditableField = ({ label, value, icon, onSave, keyboardType = 'default' }: { label: string, value: string | number, icon: React.ReactNode, onSave: (newValue: string | number) => void, keyboardType?: 'default' | 'numeric' }) => {
+const EditableField = ({label, value, icon, onSave, keyboardType = 'default'}: {
+    label: string,
+    value: string | number,
+    icon: React.ReactNode,
+    onSave: (newValue: string | number) => void,
+    keyboardType?: 'default' | 'numeric'
+}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentValue, setCurrentValue] = useState(String(value));
     const textInputRef = useRef<TextInput>(null);
@@ -63,7 +60,7 @@ const EditableField = ({ label, value, icon, onSave, keyboardType = 'default' }:
                 <Text style={styles.detailValue}>{currentValue}</Text>
             )}
             <TouchableOpacity onPress={handleEditToggle} style={styles.editIcon}>
-                <MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D" />
+                <MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D"/>
             </TouchableOpacity>
         </View>
     );
@@ -72,7 +69,7 @@ const EditableField = ({ label, value, icon, onSave, keyboardType = 'default' }:
 
 const EditItemScreen = () => {
     const params = useLocalSearchParams();
-    const { item: itemString } = params;
+    const {item: itemString} = params;
 
     const initialItem: Item | null = typeof itemString === 'string' ? JSON.parse(itemString) : null;
 
@@ -82,8 +79,8 @@ const EditItemScreen = () => {
     if (!item || !originalItem) {
         return (
             <SafeAreaView style={styles.container}>
-                <Stack.Screen options={{ title: "Error" }} />
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Stack.Screen options={{title: "Error"}}/>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                     <Text>Item not found.</Text>
                 </View>
             </SafeAreaView>
@@ -97,9 +94,9 @@ const EditItemScreen = () => {
             if (!prevItem) return null;
             if (field === 'quantity') {
                 const numValue = Number(value);
-                return { ...prevItem, [field]: isNaN(numValue) ? 0 : numValue };
+                return {...prevItem, [field]: isNaN(numValue) ? 0 : numValue};
             }
-            return { ...prevItem, [field]: value };
+            return {...prevItem, [field]: value};
         });
     };
 
@@ -110,28 +107,34 @@ const EditItemScreen = () => {
 
     const getStatusStyle = (status: Item['status']) => {
         switch (status) {
-            case 'Critical': return { backgroundColor: '#E53935' };
-            case 'Warning': return { backgroundColor: '#FFA726' };
-            case 'Neutral': return { backgroundColor: '#4CAF50' };
-            case 'Outdated': return { backgroundColor: '#757575' };
-            default: return { backgroundColor: '#4CAF50' };
+            case 'Critical':
+                return {backgroundColor: '#E53935'};
+            case 'Warning':
+                return {backgroundColor: '#FFA726'};
+            case 'Neutral':
+                return {backgroundColor: '#4CAF50'};
+            case 'Outdated':
+                return {backgroundColor: '#757575'};
+            default:
+                return {backgroundColor: '#4CAF50'};
         }
     };
 
 
     return (
         <SafeAreaView style={styles.container}>
-            <Stack.Screen options={{ headerShown: false }} />
+            <Stack.Screen options={{headerShown: false}}/>
             <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                behavior={Platform.OS === "android" ? "height" : "padding"}
                 style={styles.keyboardAvoidingContainer}
+                keyboardVerticalOffset={Platform.OS === "android" ? 90 : 0}
             >
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.contentWrapper}>
                         {/* Image Placeholder */}
                         <View style={styles.imageContainer}>
                             <TouchableOpacity style={styles.addImageButton}>
-                                <Ionicons name="add" size={48} color="#FFFFFF" />
+                                <Ionicons name="add" size={48} color="#FFFFFF"/>
                             </TouchableOpacity>
                         </View>
 
@@ -153,19 +156,19 @@ const EditItemScreen = () => {
                             <EditableField
                                 label="Day added"
                                 value={item.dayAdded}
-                                icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                                icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
                                 onSave={(newValue) => handleFieldSave('dayAdded', newValue)}
                             />
                             <EditableField
                                 label="Day expired"
                                 value={item.dayExpired}
-                                icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                                icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
                                 onSave={(newValue) => handleFieldSave('dayExpired', newValue)}
                             />
                             <EditableField
                                 label="Category"
                                 value={item.category}
-                                icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D" />}
+                                icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D"/>}
                                 onSave={(newValue) => handleFieldSave('category', newValue)}
                             />
                             <EditableField
