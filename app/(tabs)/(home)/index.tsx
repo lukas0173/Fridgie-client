@@ -68,8 +68,16 @@ const HomeScreen = () => {
                     category: record.category,
                     quantity: record.quantity,
                     status: status, // Dynamically set status
-                    dayAdded: new Date(record.created).toLocaleDateString(),
-                    dayExpired: new Date(record.expiry).toLocaleDateString(),
+                    dayAdded: new Date(record.created).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    }),
+                    dayExpired: new Date(record.expiry).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    }),
                     expiry: text, // The calculated human-readable string
                     image: record.image ? pb.getFileUrl(record, record.image) : null
                 };

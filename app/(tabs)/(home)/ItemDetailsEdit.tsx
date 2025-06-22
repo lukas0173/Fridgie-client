@@ -23,12 +23,13 @@ import {Item} from "@/components/pages/home/types";
 const pb = new PocketBase('http://192.168.25.89:8090');
 
 // A component for handling editable fields, designed to be visually clean
-const EditableField = ({label, value, icon, onSave, keyboardType = 'default'}: {
+const EditableField = ({label, value, icon, onSave, keyboardType = 'default', placeholder}: {
     label: string,
     value: string | number,
     icon: React.ReactNode,
     onSave: (newValue: string | number) => void,
-    keyboardType?: 'default' | 'numeric'
+    keyboardType?: 'default' | 'numeric',
+    placeholder?: string,
 }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [currentValue, setCurrentValue] = useState(String(value));
@@ -62,6 +63,7 @@ const EditableField = ({label, value, icon, onSave, keyboardType = 'default'}: {
                     keyboardType={keyboardType}
                     onBlur={handleBlur}
                     returnKeyType="done"
+                    placeholder={placeholder} // Pass placeholder to TextInput
                 />
             ) : (
                 <Text style={styles.detailValue}>{currentValue}</Text>
@@ -72,7 +74,6 @@ const EditableField = ({label, value, icon, onSave, keyboardType = 'default'}: {
         </View>
     );
 };
-
 
 const EditItemScreen = () => {
     const router = useRouter();
@@ -86,6 +87,7 @@ const EditItemScreen = () => {
     const [newImageUri, setNewImageUri] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [imageRelationId, setImageRelationId] = useState<string | null>(initialItem?.image || null);
+    const [isImageLoading, setIsImageLoading] = useState(false);
 
     // Fetch the raw item record on mount to get the correct relation ID,
     // because the params only contain the full image URL.
@@ -226,19 +228,21 @@ const EditItemScreen = () => {
             >
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.contentWrapper}>
-                        {/* FIX: Replaced ImageBackground with a standard View and Image */}
+
                         <View style={styles.imageContainer}>
                             {imageSource && (
                                 <Image
                                     source={imageSource}
                                     style={styles.imagePreview}
                                     resizeMode="cover"
-                                />
-                            )}
+                                    onLoadStart={() => setIsImageLoading(true)} // FIX: Add loading indicator
+                                    onLoadEnd={() => setIsImageLoading(false)}
+                                    onError={(e) => console.log('Image Load Error:', e.nativeEvent.error)}
+                                />)}
                             <TouchableOpacity style={styles.imageOverlay} onPress={handlePickImage}>
                                 {imageSource ? (
                                     <View style={[styles.addImageButton, styles.editImageButton]}>
-                                        <MaterialCommunityIcons name="pencil" size={32} color="#FFFFFF" />
+                                        <MaterialCommunityIcons name="pencil" size={32} color="#FFFFFF"/>
                                     </View>
                                 ) : (
                                     <View style={styles.addImageButton}>
@@ -246,7 +250,7 @@ const EditItemScreen = () => {
                                     </View>
                                 )}
                             </TouchableOpacity>
-                        </View>                        {/* Item Name and Status Header */}
+                        </View> {/* Item Name and Status Header */}
                         <View style={styles.header}>
                             <TextInput
                                 style={styles.itemNameInput}
@@ -266,6 +270,7 @@ const EditItemScreen = () => {
                                 value={item.dayExpired}
                                 icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
                                 onSave={(newValue) => handleFieldSave('dayExpired', String(newValue))}
+                                placeholder="YYYY-MM-DD"
                             />
                             <EditableField
                                 label="Category"
