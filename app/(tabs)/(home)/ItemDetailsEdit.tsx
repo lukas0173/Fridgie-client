@@ -1,5 +1,8 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
+    ActivityIndicator,
+    Alert,
+    Image,
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,
@@ -10,10 +13,14 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {Stack, useLocalSearchParams,} from 'expo-router';
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import PocketBase from 'pocketbase';
 
 import {Item} from "@/components/pages/home/types";
+
+const pb = new PocketBase('http://192.168.25.89:8090');
 
 // A component for handling editable fields, designed to be visually clean
 const EditableField = ({label, value, icon, onSave, keyboardType = 'default'}: {
@@ -68,6 +75,7 @@ const EditableField = ({label, value, icon, onSave, keyboardType = 'default'}: {
 
 
 const EditItemScreen = () => {
+    const router = useRouter();
     const params = useLocalSearchParams();
     const {item: itemString} = params;
 
@@ -75,6 +83,26 @@ const EditItemScreen = () => {
 
     const [originalItem, setOriginalItem] = useState<Item | null>(initialItem);
     const [item, setItem] = useState<Item | null>(initialItem);
+    const [newImageUri, setNewImageUri] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [imageRelationId, setImageRelationId] = useState<string | null>(initialItem?.image || null);
+
+    // Fetch the raw item record on mount to get the correct relation ID,
+    // because the params only contain the full image URL.
+    useEffect(() => {
+        const fetchItemRecord = async () => {
+            if (initialItem?.id) {
+                try {
+                    const record = await pb.collection('items').getOne(initialItem.id);
+                    // Store the actual ID from the 'image' relation field
+                    setImageRelationId(record.image || null);
+                } catch (e) {
+                    console.error("Failed to fetch initial item record:", e);
+                }
+            }
+        };
+        fetchItemRecord();
+    }, [initialItem?.id]);
 
     if (!item || !originalItem) {
         return (
@@ -87,8 +115,29 @@ const EditItemScreen = () => {
         );
     }
 
-    const isModified = JSON.stringify(originalItem) !== JSON.stringify(item);
+    const isModified = JSON.stringify(originalItem) !== JSON.stringify(item) || newImageUri !== null;
 
+    // --- Image Picker Logic ---
+    const handlePickImage = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            Alert.alert("Permission Required", "You need to allow access to your photos to upload an image.");
+            return;
+        }
+
+        const pickerResult = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.5,
+        });
+
+        if (!pickerResult.canceled) {
+            setNewImageUri(pickerResult.assets[0].uri);
+        }
+    };
+
+// --- Field Update Logic ---
     const handleFieldSave = (field: keyof Item, value: string | number) => {
         setItem(prevItem => {
             if (!prevItem) return null;
@@ -96,14 +145,60 @@ const EditItemScreen = () => {
                 const numValue = Number(value);
                 return {...prevItem, [field]: isNaN(numValue) ? 0 : numValue};
             }
+            // For simplicity, we just update the string.
+            // Proper date validation should be more robust.
             return {...prevItem, [field]: value};
         });
     };
 
-    const handleSaveChanges = () => {
-        console.log('Saving all changes:', item);
-        setOriginalItem(item); // Update the original state
+    // --- Save to Server Logic ---
+    const handleSaveChanges = async () => {
+        if (!item) return;
+        setIsLoading(true);
+        // Use the ID from state, which is the correct raw ID.
+        let updatedImageRelationId = imageRelationId;
+
+        try {
+            // Step 1: If a new image was picked, upload it to 'item_images' collection.
+            if (newImageUri) {
+                const formData = new FormData();
+                formData.append('image', {
+                    uri: newImageUri,
+                    name: `upload_${Date.now()}.jpg`,
+                    type: 'image/jpeg',
+                } as any);
+                formData.append('device_id', 'MANUAL-EDIT');
+
+                const createdImageRecord = await pb.collection('item_images').create(formData);
+                updatedImageRelationId = createdImageRecord.id;
+            }
+
+            // Step 2: Prepare the data to update the main 'items' record.
+            const dataToUpdate = {
+                "name": item.name,
+                "category": item.category,
+                "quantity": item.quantity,
+                "expiry": item.dayExpired, // Use YYYY-MM-DD format for expiry
+                // FIX: Assign the correct ID to the relation field.
+                "image": updatedImageRelationId,
+            };
+
+            // Step 3: Update the 'items' record using its ID.
+            await pb.collection('items').update(item.id, dataToUpdate);
+
+            Alert.alert('Success', 'Item updated successfully!');
+            router.back(); // Go back to the previous screen
+
+        } catch (error: any) {
+            console.error("Error saving changes:", error.originalError || error);
+            Alert.alert('Error', `Failed to save changes: ${error.message}`);
+        } finally {
+            setIsLoading(false);
+        }
     };
+
+    // Determine which image to show: new, existing, or none.
+    const imageSource = newImageUri ? {uri: newImageUri} : (item.image ? {uri: item.image} : null);
 
     const getStatusStyle = (status: Item['status']) => {
         switch (status) {
@@ -131,14 +226,27 @@ const EditItemScreen = () => {
             >
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.contentWrapper}>
-                        {/* Image Placeholder */}
+                        {/* FIX: Replaced ImageBackground with a standard View and Image */}
                         <View style={styles.imageContainer}>
-                            <TouchableOpacity style={styles.addImageButton}>
-                                <Ionicons name="add" size={48} color="#FFFFFF"/>
+                            {imageSource && (
+                                <Image
+                                    source={imageSource}
+                                    style={styles.imagePreview}
+                                    resizeMode="cover"
+                                />
+                            )}
+                            <TouchableOpacity style={styles.imageOverlay} onPress={handlePickImage}>
+                                {imageSource ? (
+                                    <View style={[styles.addImageButton, styles.editImageButton]}>
+                                        <MaterialCommunityIcons name="pencil" size={32} color="#FFFFFF" />
+                                    </View>
+                                ) : (
+                                    <View style={styles.addImageButton}>
+                                        <Ionicons name="add" size={48} color="#FFFFFF"/>
+                                    </View>
+                                )}
                             </TouchableOpacity>
-                        </View>
-
-                        {/* Item Name and Status Header */}
+                        </View>                        {/* Item Name and Status Header */}
                         <View style={styles.header}>
                             <TextInput
                                 style={styles.itemNameInput}
@@ -151,25 +259,19 @@ const EditItemScreen = () => {
                             </View>
                         </View>
 
-                        {/* Details section with original flat styling */}
+                        {/* Details section */}
                         <View style={styles.detailsContainer}>
-                            <EditableField
-                                label="Day added"
-                                value={item.dayAdded}
-                                icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
-                                onSave={(newValue) => handleFieldSave('dayAdded', newValue)}
-                            />
                             <EditableField
                                 label="Day expired"
                                 value={item.dayExpired}
                                 icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
-                                onSave={(newValue) => handleFieldSave('dayExpired', newValue)}
+                                onSave={(newValue) => handleFieldSave('dayExpired', String(newValue))}
                             />
                             <EditableField
                                 label="Category"
                                 value={item.category}
                                 icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D"/>}
-                                onSave={(newValue) => handleFieldSave('category', newValue)}
+                                onSave={(newValue) => handleFieldSave('category', String(newValue))}
                             />
                             <EditableField
                                 label="Quantity"
@@ -183,12 +285,15 @@ const EditItemScreen = () => {
 
                     {isModified && (
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.button} onPress={handleSaveChanges}>
-                                <Text style={styles.buttonText}>Save Changes</Text>
+                            <TouchableOpacity style={styles.button} onPress={handleSaveChanges} disabled={isLoading}>
+                                {isLoading ? (
+                                    <ActivityIndicator color="#FFFFFF"/>
+                                ) : (
+                                    <Text style={styles.buttonText}>Save Changes</Text>
+                                )}
                             </TouchableOpacity>
                         </View>
-                    )}
-                </ScrollView>
+                    )}                </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
@@ -218,6 +323,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 10,
         marginBottom: 24,
+    },
+    imagePreview: {
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
     },
     addImageButton: {
         width: 72,
@@ -304,6 +414,20 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    imageBackground: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    imageOverlay: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    editImageButton: {
+        backgroundColor: 'rgba(0,0,0,0.4)',
     },
 });
 
