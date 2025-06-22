@@ -58,29 +58,34 @@ const ItemDetailsScreen = () => {
         }
     };
 
+    const getUsedStatusStyle = (isUsed: boolean) => {
+        return { backgroundColor: isUsed ? '#333333' : '#666666' };
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.mainContent}>
                 {/* Conditionally render the Image or the placeholder */}
-
                 <View style={styles.imageContainer}>
-
                     {item.image ? (
-
                         <Image source={{uri: item.image}} style={styles.image} resizeMode="cover"/>
-
                     ) : (
-
                         <Ionicons name="pint-outline" size={128} color="#BDBDBD"/>
-
                     )}
-
                 </View>
                 {/* Item Name and Status */}
                 <View style={styles.header}>
                     <Text style={styles.itemName}>{item.name}</Text>
-                    <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
-                        <Text style={styles.statusText}>{item.status}</Text>
+
+                    {/* Container for the status badges */}
+                    <View style={styles.statusContainer}>
+                        <View style={[styles.statusBadge, getStatusStyle(item.status)]}>
+                            <Text style={styles.statusText}>{item.status}</Text>
+                        </View>
+                        {/* Add the new "Used" status badge */}
+                        <View style={[styles.statusBadge, getUsedStatusStyle(item.used)]}>
+                            <Text style={styles.statusText}>{item.used ? 'Used' : 'Unused'}</Text>
+                        </View>
                     </View>
                 </View>
 
@@ -162,6 +167,10 @@ const styles = StyleSheet.create({
         color: '#333',
         flex: 1,
         marginRight: 10,
+    },
+    statusContainer: {
+        flexDirection: 'row',
+        gap: 12,
     },
     statusBadge: {
         paddingVertical: 5,

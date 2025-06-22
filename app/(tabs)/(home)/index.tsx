@@ -48,10 +48,9 @@ const HomeScreen = () => {
     const fetchItems = async () => {
         try {
             setError(null);
-            // Add the { expand: 'image' } option here
             const records: ListResult<RecordModel> = await pb.collection('items').getList(1, 50, {
                 sort: '-created',
-                expand: 'image', // <-- THIS IS THE FIX
+                expand: 'image',
             });
 
             const formattedItems: Item[] = records.items.map((record: any): Item => { // Use 'any' for simplicity with expand
@@ -79,7 +78,8 @@ const HomeScreen = () => {
                     dayAdded: new Date(record.created).toLocaleDateString('en-GB'),
                     dayExpired: new Date(record.expiry).toLocaleDateString('en-GB'),
                     expiry: text,
-                    image: imageUrl, // Assign the correctly constructed URL
+                    image: imageUrl,
+                    used: record.used,
                 };
             });
 

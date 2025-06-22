@@ -9,4 +9,5 @@ export type Item = {
     category: string;
     quantity: number;
     image?: string | null;
+    used: boolean;
 };
