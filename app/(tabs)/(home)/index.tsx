@@ -120,7 +120,8 @@ const HomeScreen = () => {
                     <Text style={styles.headerDate}>{new Date().toLocaleDateString('en-US', {
                         month: 'long',
                         day: 'numeric'
-                    })}</Text> <TouchableOpacity>
+                    })}</Text>
+                    <TouchableOpacity>
                     <Feather name="search" size={24} color="#333"/>
                 </TouchableOpacity>
                 </View>

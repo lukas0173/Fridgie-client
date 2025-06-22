@@ -228,7 +228,6 @@ const EditItemScreen = () => {
             >
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
                     <View style={styles.contentWrapper}>
-
                         <View style={styles.imageContainer}>
                             {imageSource && (
                                 <Image
@@ -250,7 +249,8 @@ const EditItemScreen = () => {
                                     </View>
                                 )}
                             </TouchableOpacity>
-                        </View> {/* Item Name and Status Header */}
+                        </View>
+                        {/* Item Name and Status Header */}
                         <View style={styles.header}>
                             <TextInput
                                 style={styles.itemNameInput}
@@ -298,7 +298,8 @@ const EditItemScreen = () => {
                                 )}
                             </TouchableOpacity>
                         </View>
-                    )}                </ScrollView>
+                    )}
+                </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );

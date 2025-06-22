@@ -1,5 +1,5 @@
 import React from "react";
-import {StyleSheet, Text, TouchableOpacity, View, Image} from "react-native";
+import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
 import {Item} from "@/components/pages/home/types";
@@ -20,11 +20,12 @@ const ItemCard = ({item}: { item: Item }) => {
     return <TouchableOpacity style={styles.itemCard} onPress={handlePress}>
         <View style={styles.itemIconBackground}>
             {item.image ? (
-                <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+                <Image source={{uri: item.image}} style={styles.image} resizeMode="cover"/>
             ) : (
                 <Ionicons name="pint-outline" size={32} color="#8A8A8D"/>
             )}
-        </View>        <Text style={styles.itemName}>{item.name}</Text>
+        </View>
+        <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemExpiry}>{item.expiry}</Text>
     </TouchableOpacity>
 }
