@@ -5,59 +5,7 @@ import {Ionicons} from "@expo/vector-icons";
 import {Item} from "@/components/pages/home/types";
 import ItemCard from "@/components/pages/home/ItemCard";
 
-const expiringItems: Item[] = [
-    {
-        id: 'exp1',
-        name: 'Sữa Vinamilk',
-        expiry: 'Tomorrow',
-        category: 'Canned/Packed',
-        status: 'Critical',
-        dayAdded: '10/05/2025',
-        dayExpired: '21/05/2025',
-        quantity: 1
-    },
-    {
-        id: 'exp2',
-        name: 'Bread',
-        expiry: '2 days',
-        category: 'Canned/Packed',
-        status: 'Critical',
-        dayAdded: '19/05/2025',
-        dayExpired: '22/05/2025',
-        quantity: 1
-    },
-    {
-        id: 'exp3',
-        name: 'Chicken Breast',
-        expiry: '2 days',
-        category: 'Fruits/Vegetables',
-        status: 'Critical',
-        dayAdded: '19/05/2025',
-        dayExpired: '22/05/2025',
-        quantity: 2
-    },
-    {
-        id: 'exp4',
-        name: 'Yogurt',
-        expiry: '3 days',
-        category: 'Canned/Packed',
-        status: 'Warning',
-        dayAdded: '18/05/2025',
-        dayExpired: '23/05/2025',
-        quantity: 4
-    },
-    {
-        id: 'exp5',
-        name: 'Salad Mix',
-        expiry: '3 days',
-        category: 'Fruits/Vegetables',
-        status: 'Warning',
-        dayAdded: '18/05/2025',
-        dayExpired: '23/05/2025',
-        quantity: 1
-    },
-];
-const ExpiringHorizontalList = () => {
+const ExpiringHorizontalList = ({items}: {items: Item[]}) => {
     return <View style={styles.expiringSection}>
         <View style={styles.expiringHeader}>
             <Text style={styles.expiringTitle}>4 Items</Text>
@@ -67,7 +15,7 @@ const ExpiringHorizontalList = () => {
             </View>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {expiringItems.map(item => (
+            {items.map(item => (
                 <ItemCard key={item.id} item={item}/>
             ))}
         </ScrollView>
