@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+    ActivityIndicator,
+    Alert,
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,
@@ -10,13 +12,16 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import {Stack, useLocalSearchParams, useRouter} from 'expo-router';
+import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import PocketBase from 'pocketbase';
 
-import { Item } from "@/components/pages/home/types";
+import {Item} from "@/components/pages/home/types";
+
+const pb = new PocketBase('http://192.168.25.89:8090');
 
 // Helper component for a simple input row
-const InputRow = ({ label, value, onChangeText, placeholder, icon, keyboardType = 'default' }: {
+const InputRow = ({label, value, onChangeText, placeholder, icon, keyboardType = 'default'}: {
     label: string,
     value: string,
     onChangeText: (text: string) => void,
@@ -46,6 +51,7 @@ type AddItemState = Omit<Item, 'quantity'> & {
 const AddItemScreen = () => {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const [isLoading, setIsLoading] = useState(false); // State for loading indicator
 
     // Default state for a new item, now fully matching the Item type
     const getInitialState = (): AddItemState => ({
@@ -70,29 +76,51 @@ const AddItemScreen = () => {
     }, [params.barcodeData]);
 
     const handleInputChange = (field: keyof typeof item, value: string) => {
-        setItem(prev => ({ ...prev, [field]: value }));
+        setItem(prev => ({...prev, [field]: value}));
     };
 
-    const handleSaveItem = () => {
-        const finalItem: Item = {
-            ...item,
-            // We use dayExpired for both fields to ensure consistency
+    const handleSaveItem = async () => {
+        if (!item.name || !item.dayExpired) {
+            Alert.alert('Missing Information', 'Please fill in at least the item name and expiry date.');
+            return;
+        }
+
+        setIsLoading(true); // Show loading indicator
+
+        // 1. Prepare the data object that matches the PocketBase collection schema.
+        const data = {
+            name: item.name,
+            category: item.category,
+            quantity: parseInt(item.quantity, 10) || 1,
+            // PocketBase can parse 'YYYY-MM-DD' strings directly into its Date format
             expiry: item.dayExpired,
-            quantity: parseInt(item.quantity, 10) || 0,
+            status: item.status,
+            // We don't need to send an image yet.
         };
 
-        console.log('Saving new item:', finalItem);
-        router.back();
-    };
+        console.log(data)
 
+        try {
+            // 2. Send the data to the 'items' collection.
+            const record = await pb.collection('items').create(data);
+            console.log('Successfully saved new item:', record);
+            Alert.alert('Success', 'Item added to your inventory!');
+            router.back(); // Go back to the previous screen
+
+        } catch (error: any) {
+            // 3. Handle any errors from the server.
+            console.error('Failed to save item:', error);
+            Alert.alert('Error', `Failed to save item: ${error.message}`);
+        } finally {
+            setIsLoading(false); // Hide loading indicator
+        }
+    };
     return (
         <SafeAreaView style={styles.container}>
             <Stack.Screen options={{
-                headerShown: true,
-                title: 'Add New Item',
                 headerLeft: () => (
-                    <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
-                        <Ionicons name="close" size={28} color="#333" />
+                    <TouchableOpacity onPress={() => router.back()} style={{marginLeft: 10}}>
+                        <Ionicons name="close" size={28} color="#333"/>
                     </TouchableOpacity>
                 )
             }}/>
@@ -106,28 +134,28 @@ const AddItemScreen = () => {
                         style={styles.scanButton}
                         onPress={() => router.push('/scan')}
                     >
-                        <Ionicons name="barcode-outline" size={24} color="#FFFFFF" />
+                        <Ionicons name="barcode-outline" size={24} color="#FFFFFF"/>
                         <Text style={styles.scanButtonText}>Scan Barcode</Text>
                     </TouchableOpacity>
 
                     <View style={styles.detailsContainer}>
                         <InputRow
                             label="Name"
-                            icon={<MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D" />}
+                            icon={<MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D"/>}
                             value={item.name}
                             onChangeText={(text) => handleInputChange('name', text)}
                             placeholder="e.g., Canned Tuna"
                         />
                         <InputRow
                             label="Category"
-                            icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D" />}
+                            icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D"/>}
                             value={item.category}
                             onChangeText={(text) => handleInputChange('category', text)}
                             placeholder="e.g., Canned Goods"
                         />
                         <InputRow
                             label="Quantity"
-                            icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D" />}
+                            icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D"/>}
                             value={item.quantity}
                             onChangeText={(text) => handleInputChange('quantity', text)}
                             placeholder="1"
@@ -135,14 +163,14 @@ const AddItemScreen = () => {
                         />
                         <InputRow
                             label="Date Added"
-                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
                             value={item.dayAdded}
                             onChangeText={(text) => handleInputChange('dayAdded', text)}
                             placeholder="YYYY-MM-DD"
                         />
                         <InputRow
                             label="Expiry Date"
-                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
                             value={item.dayExpired}
                             onChangeText={(text) => handleInputChange('dayExpired', text)}
                             placeholder="YYYY-MM-DD"
@@ -150,10 +178,13 @@ const AddItemScreen = () => {
                     </View>
 
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={handleSaveItem}>
-                            <Text style={styles.buttonText}>Add Item</Text>
-                        </TouchableOpacity>
-                    </View>
+                        <TouchableOpacity style={styles.button} onPress={handleSaveItem} disabled={isLoading}>
+                            {isLoading ? (
+                                <ActivityIndicator color="#FFFFFF"/>
+                            ) : (
+                                <Text style={styles.buttonText}>Add Item</Text>
+                            )}
+                        </TouchableOpacity> </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
