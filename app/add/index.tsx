@@ -58,12 +58,13 @@ const AddItemScreen = () => {
         id: String(Date.now()),
         name: '',
         status: 'Neutral',
-        dayAdded: new Date().toLocaleDateString('en-CA'), // YYYY-MM-DD format
+        dayAdded: new Date().toLocaleDateString('en-GB'),
         dayExpired: '', // The main field for expiry date
-        expiry: '', // Included to satisfy the type, but we'll use dayExpired
+        expiry: '',
         category: '',
         quantity: '1',
         image: null,
+        used: false
     });
 
     const [item, setItem] = useState<AddItemState>(getInitialState);
@@ -118,12 +119,9 @@ const AddItemScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <Stack.Screen options={{
-                headerLeft: () => (
-                    <TouchableOpacity onPress={() => router.back()} style={{marginLeft: 10}}>
-                        <Ionicons name="close" size={28} color="#333"/>
-                    </TouchableOpacity>
-                )
+                headerShown: false
             }}/>
+
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.keyboardAvoidingContainer}
@@ -176,7 +174,6 @@ const AddItemScreen = () => {
                             placeholder="YYYY-MM-DD"
                         />
                     </View>
-
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.button} onPress={handleSaveItem} disabled={isLoading}>
                             {isLoading ? (
@@ -184,7 +181,8 @@ const AddItemScreen = () => {
                             ) : (
                                 <Text style={styles.buttonText}>Add Item</Text>
                             )}
-                        </TouchableOpacity> </View>
+                        </TouchableOpacity>
+                    </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
