@@ -1,5 +1,5 @@
 import React from "react";
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View, Image} from "react-native";
 import {useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
 import {Item} from "@/components/pages/home/types";
@@ -19,9 +19,12 @@ const ItemCard = ({item}: { item: Item }) => {
 
     return <TouchableOpacity style={styles.itemCard} onPress={handlePress}>
         <View style={styles.itemIconBackground}>
-            <Ionicons name="pint-outline" size={32} color="#8A8A8D"/>
-        </View>
-        <Text style={styles.itemName}>{item.name}</Text>
+            {item.image ? (
+                <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+            ) : (
+                <Ionicons name="pint-outline" size={32} color="#8A8A8D"/>
+            )}
+        </View>        <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemExpiry}>{item.expiry}</Text>
     </TouchableOpacity>
 }
@@ -43,6 +46,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 8,
+        overflow: 'hidden'
     },
     itemName: {
         color: '#333',
@@ -53,5 +57,9 @@ const styles = StyleSheet.create({
         color: '#8A8A8D',
         fontSize: 12,
     },
-
+    image: {
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden'
+    },
 })

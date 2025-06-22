@@ -10,7 +10,7 @@ import InventoryList from "@/components/pages/home/InventoryList";
 import {Item} from "@/components/pages/home/types";
 
 
-const pb = new PocketBase('http://192.168.25.89:8090');
+const pb = new PocketBase('http://192.168.110.89:8090');
 
 const getExpiryInfo = (expiryDateString: string): { daysLeft: number, text: string } => {
     const now = new Date();
@@ -47,39 +47,39 @@ const HomeScreen = () => {
     // --- Data Fetching Logic ---
     const fetchItems = async () => {
         try {
-            setError(null); // Reset error on new fetch
+            setError(null);
+            // Add the { expand: 'image' } option here
             const records: ListResult<RecordModel> = await pb.collection('items').getList(1, 50, {
-                sort: '-created', // Sort by newest first
+                sort: '-created',
+                expand: 'image', // <-- THIS IS THE FIX
             });
 
-            // --- Map PocketBase records to our app's Item type ---
-            const formattedItems: Item[] = records.items.map((record: RecordModel): Item => {
-                const {daysLeft, text} = getExpiryInfo(record.expiry);
+            const formattedItems: Item[] = records.items.map((record: any): Item => { // Use 'any' for simplicity with expand
+                const { daysLeft, text } = getExpiryInfo(record.expiry);
 
-                // Determine status based on days left
                 let status: Item['status'] = 'Neutral';
                 if (daysLeft < 0) status = 'Outdated';
                 else if (daysLeft <= 2) status = 'Critical';
                 else if (daysLeft <= 7) status = 'Warning';
+
+                // Now, build the image URL from the expanded data
+                let imageUrl = null;
+                if (record.expand && record.expand.image) {
+                    const imageRecord = record.expand.image;
+                    // getFileUrl needs the record the file belongs to (imageRecord) and the filename (imageRecord.image)
+                    imageUrl = pb.getFileUrl(imageRecord, imageRecord.image);
+                }
 
                 return {
                     id: record.id,
                     name: record.name,
                     category: record.category,
                     quantity: record.quantity,
-                    status: status, // Dynamically set status
-                    dayAdded: new Date(record.created).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    }),
-                    dayExpired: new Date(record.expiry).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    }),
-                    expiry: text, // The calculated human-readable string
-                    image: record.image ? pb.getFileUrl(record, record.image) : null
+                    status: status,
+                    dayAdded: new Date(record.created).toLocaleDateString('en-GB'),
+                    dayExpired: new Date(record.expiry).toLocaleDateString('en-GB'),
+                    expiry: text,
+                    image: imageUrl, // Assign the correctly constructed URL
                 };
             });
 
@@ -110,7 +110,7 @@ const HomeScreen = () => {
 
     // --- Filter items for the top horizontal list ---
     // Show items that are Critical or a Warning
-    const expiringItems = allItems.filter(item => item.status === 'Critical' || item.status === 'Warning');
+    const expiringItems = allItems.filter(item => item.status === activeStatusTab);
 
     return (
         <SafeAreaView style={styles.container}>

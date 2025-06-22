@@ -18,7 +18,7 @@ import PocketBase from 'pocketbase';
 
 import {Item} from "@/components/pages/home/types";
 
-const pb = new PocketBase('http://192.168.25.89:8090');
+const pb = new PocketBase('http://192.168.110.89:8090');
 
 // Helper component for a simple input row
 const InputRow = ({label, value, onChangeText, placeholder, icon, keyboardType = 'default'}: {

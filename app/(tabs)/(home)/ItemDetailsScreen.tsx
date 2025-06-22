@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {router, Stack, useLocalSearchParams} from 'expo-router';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {Item} from '@/components/pages/home/types';
@@ -61,11 +61,21 @@ const ItemDetailsScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.mainContent}>
-                {/* Image Placeholder */}
-                <View style={styles.imageContainer}>
-                    <Ionicons name="pint-outline" size={128} color="#BDBDBD"/>
-                </View>
+                {/* Conditionally render the Image or the placeholder */}
 
+                <View style={styles.imageContainer}>
+
+                    {item.image ? (
+
+                        <Image source={{uri: item.image}} style={styles.image} resizeMode="cover"/>
+
+                    ) : (
+
+                        <Ionicons name="pint-outline" size={128} color="#BDBDBD"/>
+
+                    )}
+
+                </View>
                 {/* Item Name and Status */}
                 <View style={styles.header}>
                     <Text style={styles.itemName}>{item.name}</Text>
@@ -134,6 +144,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 10,
         marginBottom: 24,
+        overflow: 'hidden'
+    },
+    image: {
+        width: '100%',
+        height: '100%',
     },
     header: {
         flexDirection: 'row',
