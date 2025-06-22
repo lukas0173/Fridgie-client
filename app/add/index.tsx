@@ -1,0 +1,233 @@
+import React, { useState, useEffect } from 'react';
+import {
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+
+import { Item } from "@/components/pages/home/types";
+
+// Helper component for a simple input row
+const InputRow = ({ label, value, onChangeText, placeholder, icon, keyboardType = 'default' }: {
+    label: string,
+    value: string,
+    onChangeText: (text: string) => void,
+    placeholder: string,
+    icon: React.ReactNode,
+    keyboardType?: 'default' | 'numeric'
+}) => (
+    <View style={styles.detailRow}>
+        <View style={styles.detailRowIcon}>{icon}</View>
+        <Text style={styles.detailLabel}>{label}</Text>
+        <TextInput
+            style={styles.textInput}
+            value={value}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            keyboardType={keyboardType}
+        />
+    </View>
+);
+
+// Define a type for the local state where quantity is a string for easier input handling
+type AddItemState = Omit<Item, 'quantity'> & {
+    quantity: string;
+};
+
+
+const AddItemScreen = () => {
+    const router = useRouter();
+    const params = useLocalSearchParams();
+
+    // Default state for a new item, now fully matching the Item type
+    const getInitialState = (): AddItemState => ({
+        id: String(Date.now()),
+        name: '',
+        status: 'Neutral',
+        dayAdded: new Date().toLocaleDateString('en-CA'), // YYYY-MM-DD format
+        dayExpired: '', // The main field for expiry date
+        expiry: '', // Included to satisfy the type, but we'll use dayExpired
+        category: '',
+        quantity: '1',
+        image: null,
+    });
+
+    const [item, setItem] = useState<AddItemState>(getInitialState);
+
+    // Listen for data coming back from the scanner
+    useEffect(() => {
+        if (params.barcodeData) {
+            handleInputChange('name', `Scanned Item: ${params.barcodeData}`);
+        }
+    }, [params.barcodeData]);
+
+    const handleInputChange = (field: keyof typeof item, value: string) => {
+        setItem(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleSaveItem = () => {
+        const finalItem: Item = {
+            ...item,
+            // We use dayExpired for both fields to ensure consistency
+            expiry: item.dayExpired,
+            quantity: parseInt(item.quantity, 10) || 0,
+        };
+
+        console.log('Saving new item:', finalItem);
+        router.back();
+    };
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <Stack.Screen options={{
+                headerShown: true,
+                title: 'Add New Item',
+                headerLeft: () => (
+                    <TouchableOpacity onPress={() => router.back()} style={{ marginLeft: 10 }}>
+                        <Ionicons name="close" size={28} color="#333" />
+                    </TouchableOpacity>
+                )
+            }}/>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={styles.keyboardAvoidingContainer}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 90}
+            >
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <TouchableOpacity
+                        style={styles.scanButton}
+                        onPress={() => router.push('/scan')}
+                    >
+                        <Ionicons name="barcode-outline" size={24} color="#FFFFFF" />
+                        <Text style={styles.scanButtonText}>Scan Barcode</Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.detailsContainer}>
+                        <InputRow
+                            label="Name"
+                            icon={<MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D" />}
+                            value={item.name}
+                            onChangeText={(text) => handleInputChange('name', text)}
+                            placeholder="e.g., Canned Tuna"
+                        />
+                        <InputRow
+                            label="Category"
+                            icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D" />}
+                            value={item.category}
+                            onChangeText={(text) => handleInputChange('category', text)}
+                            placeholder="e.g., Canned Goods"
+                        />
+                        <InputRow
+                            label="Quantity"
+                            icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D" />}
+                            value={item.quantity}
+                            onChangeText={(text) => handleInputChange('quantity', text)}
+                            placeholder="1"
+                            keyboardType="numeric"
+                        />
+                        <InputRow
+                            label="Date Added"
+                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                            value={item.dayAdded}
+                            onChangeText={(text) => handleInputChange('dayAdded', text)}
+                            placeholder="YYYY-MM-DD"
+                        />
+                        <InputRow
+                            label="Expiry Date"
+                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D" />}
+                            value={item.dayExpired}
+                            onChangeText={(text) => handleInputChange('dayExpired', text)}
+                            placeholder="YYYY-MM-DD"
+                        />
+                    </View>
+
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={handleSaveItem}>
+                            <Text style={styles.buttonText}>Add Item</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F0F2F5',
+    },
+    keyboardAvoidingContainer: {
+        flex: 1,
+    },
+    scrollContainer: {
+        padding: 20,
+    },
+    scanButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#333',
+        paddingVertical: 15,
+        borderRadius: 12,
+        marginBottom: 24,
+    },
+    scanButtonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginLeft: 10,
+    },
+    detailsContainer: {
+        marginBottom: 20,
+    },
+    detailRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+    },
+    detailRowIcon: {
+        width: 40,
+        alignItems: 'center',
+    },
+    detailLabel: {
+        fontSize: 16,
+        color: '#8A8A8D',
+        width: 110,
+    },
+    textInput: {
+        flex: 1,
+        fontSize: 16,
+        color: '#333',
+        textAlign: 'right',
+    },
+    buttonContainer: {
+        marginTop: 'auto',
+        paddingTop: 20,
+    },
+    button: {
+        paddingVertical: 15,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#4CAF50',
+        elevation: 4,
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+});
+
+export default AddItemScreen;

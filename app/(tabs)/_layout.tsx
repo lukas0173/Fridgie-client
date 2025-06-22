@@ -73,7 +73,7 @@ const CustomTabBar = ({state, descriptors, navigation}: any) => {
             <TouchableOpacity
                 style={styles.addButton}
                 onPress={() => {
-                    router.push("/scan")
+                    router.push("/add")
                 }}
             >
                 <Feather name="plus" size={32} color="#FFF"/>
