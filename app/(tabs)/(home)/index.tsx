@@ -10,7 +10,7 @@ import InventoryList from "@/components/pages/home/InventoryList";
 import {Item} from "@/components/pages/home/types";
 
 
-const pb = new PocketBase('http://192.168.110.89:8090');
+const pb = new PocketBase('http://192.168.25.89:8090');
 
 const getExpiryInfo = (expiryDateString: string): { daysLeft: number, text: string } => {
     const now = new Date();
