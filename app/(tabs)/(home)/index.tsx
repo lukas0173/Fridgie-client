@@ -142,7 +142,7 @@ const HomeScreen = () => {
                         <ExpirationStatusBar activeStatusTab={activeStatusTab} setActiveStatusTab={setActiveStatusTab}/>
 
                         {/* --- EXPIRING ITEMS HORIZONTAL LIST --- */}
-                        <ExpiringHorizontalList items={expiringItems}/>
+                        <ExpiringHorizontalList items={expiringItems} activeStatusTab={activeStatusTab}/>
 
                         {/* --- INVENTORY SECTION --- */}
                         <InventoryList items={allItems}/>
