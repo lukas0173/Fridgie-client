@@ -4,13 +4,15 @@ import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native
 import ItemCard from "@/components/pages/home/ItemCard";
 import {Item} from "@/components/pages/home/types"
 
-const inventoryCategories = ['All', 'Canned/Packed', 'Fruits/Vegetables', 'Condiments'];
+const inventoryCategories = ['All', 'Canned/Packed', 'Fruits/Vegetables', 'Cooked Food'];
 
 const InventoryList = ({items} : {items:Item[]}) => {
     const [activeCategory, setActiveCategory] = useState('All');
 
+    // FIX: Filtering logic is now case-insensitive to prevent mismatches.
     const filteredInventory = items.filter(item =>
-        activeCategory === 'All' || item.category === activeCategory
+        activeCategory === 'All' ||
+        (item.category && item.category.toLowerCase() === activeCategory.toLowerCase())
     );
 
     return <View style={styles.inventorySection}>
@@ -76,6 +78,6 @@ const styles = StyleSheet.create({
     inventoryGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-between',
+        justifyContent: 'space-between', // Align items to the left
     },
 })

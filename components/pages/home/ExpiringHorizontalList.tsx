@@ -5,7 +5,7 @@ import {Ionicons} from "@expo/vector-icons";
 import {Item} from "@/components/pages/home/types";
 import ItemCard from "@/components/pages/home/ItemCard";
 
-const ExpiringHorizontalList = ({items}: { items: Item[] }) => {
+const ExpiringHorizontalList = ({items, activeStatusTab}: { items: Item[], activeStatusTab: any }) => {
 // Don't render anything if there are no items for the selected filter
     if (items.length === 0) {
         return (
@@ -23,7 +23,8 @@ const ExpiringHorizontalList = ({items}: { items: Item[] }) => {
                 <Text style={styles.expiringTitle}>{title}</Text>
                 <View style={styles.expiringTime}>
                     <Ionicons name="time-outline" size={16} color="#8A8A8D"/>
-                    <Text style={styles.expiringTimeText}>Expiring</Text>
+                    <Text
+                        style={styles.expiringTimeText}>{activeStatusTab === "Critical" ? "1-3 days" : activeStatusTab === "Warning" ? "3-7 days" : "Expired"}</Text>
                 </View>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
