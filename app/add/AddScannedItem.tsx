@@ -16,29 +16,22 @@ import {
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router';
 import PocketBase from 'pocketbase';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
+import {calculateDaysUntilExpiry} from "@/components/utils/date";
 
 // Initialize PocketBase
 const pb = new PocketBase(process.env.EXPO_PUBLIC_LOCAL_API_URL);
 
 // Determines the item status based on the expiry date string (YYYY-MM-DD)
 const getItemStatus = (expiryDateString: string): 'Neutral' | 'Critical' | 'Warning' | 'Outdated' => {
-    const now = new Date();
-    const expiryDate = new Date(expiryDateString);
 
-    // Reset time part for accurate day difference calculation
-    now.setHours(0, 0, 0, 0);
-    expiryDate.setHours(0, 0, 0, 0);
-
-    const diffTime = expiryDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) {
+    const diffTime = calculateDaysUntilExpiry(expiryDateString);
+    if (diffTime < 0) {
         return 'Outdated';
     }
-    if (diffDays <= 2) {
+    if (diffTime <= 2) {
         return 'Critical';
     }
-    if (diffDays <= 7) {
+    if (diffTime <= 7) {
         return 'Warning';
     }
     return 'Neutral';

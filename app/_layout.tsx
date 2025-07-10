@@ -87,7 +87,7 @@ export default function RootLayout() {
             // Navigate to our new screen with the data from the notification
             if (data.imageRecordId && data.imageUrl) {
                 router.push({
-                    pathname: "add/AddScannedItem",
+                    pathname: "/add/AddScannedItem",
                     params: {imageRecordId: data.imageRecordId, imageUrl: data.imageUrl},
                 });
             }

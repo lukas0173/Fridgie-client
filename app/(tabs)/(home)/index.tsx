@@ -9,32 +9,25 @@ import ExpiringHorizontalList from "@/components/pages/home/ExpiringHorizontalLi
 import InventoryList from "@/components/pages/home/InventoryList";
 import {Item} from "@/components/pages/home/types";
 
+import * as catppuccinColors from '@/constants/colors/catppuccin-palette.json'
+import {calculateDaysUntilExpiry} from "@/components/utils/date";
 
-console.log(process.env.EXPO_PUBLIC_LOCAL_API_URL);
+
 const pb = new PocketBase(process.env.EXPO_PUBLIC_LOCAL_API_URL);
-console.log(pb)
 
 const getExpiryInfo = (expiryDateString: string): { daysLeft: number, text: string } => {
-    const now = new Date();
-    const expiryDate = new Date(expiryDateString);
+    const diffTime = calculateDaysUntilExpiry(expiryDateString)
 
-    // Reset time part to compare dates only
-    now.setHours(0, 0, 0, 0);
-    expiryDate.setHours(0, 0, 0, 0);
-
-    const diffTime = expiryDate.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) {
-        return {daysLeft: diffDays, text: 'Expired'};
+    if (diffTime < 0) {
+        return {daysLeft: diffTime, text: 'Expired'};
     }
-    if (diffDays === 0) {
+    if (diffTime === 0) {
         return {daysLeft: 0, text: 'Today'};
     }
-    if (diffDays === 1) {
+    if (diffTime === 1) {
         return {daysLeft: 1, text: 'Tomorrow'};
     }
-    return {daysLeft: diffDays, text: `${diffDays} days`};
+    return {daysLeft: diffTime, text: `${diffTime} days`};
 };
 
 // The main (home) Screen Component
@@ -160,7 +153,7 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         flex: 1,
-        backgroundColor: '#F0F2F5',
+        backgroundColor: catppuccinColors.latte.colors.base.hex,
     },
     header: {
         flexDirection: 'row',
@@ -172,46 +165,7 @@ const styles = StyleSheet.create({
     headerDate: {
         fontSize: 34,
         fontWeight: 'bold',
-        color: '#333',
-    },
-    bottomNav: {
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 90,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'flex-start',
-        backgroundColor: '#FFFFFF',
-        borderTopWidth: 1,
-        borderTopColor: '#EFEFEF',
-        paddingTop: 10,
-    },
-    navButton: {
-        alignItems: 'center',
-    },
-    navText: {
-        fontSize: 12,
-        color: '#8A8A8D',
-    },
-    navTextActive: {
-        fontSize: 12,
-        color: '#4CAF50',
-    },
-    addButton: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
-        backgroundColor: '#4CAF50',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bottom: 25,
-        shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        color: catppuccinColors.latte.colors.text.hex,
     },
     centered: {
         flex: 1,
@@ -221,11 +175,11 @@ const styles = StyleSheet.create({
     },
     infoText: {
         marginTop: 10,
-        color: '#666',
+        color: catppuccinColors.latte.colors.text.hex,
         fontSize: 16,
     },
     errorText: {
-        color: '#E53935',
+        color: catppuccinColors.latte.colors.red.hex,
         fontSize: 16,
         textAlign: 'center',
     }
