@@ -18,7 +18,7 @@ import PocketBase from 'pocketbase';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 
 // Initialize PocketBase
-const pb = new PocketBase('http://192.168.25.89:8090');
+const pb = new PocketBase(process.env.EXPO_PUBLIC_LOCAL_API_URL);
 
 // Determines the item status based on the expiry date string (YYYY-MM-DD)
 const getItemStatus = (expiryDateString: string): 'Neutral' | 'Critical' | 'Warning' | 'Outdated' => {

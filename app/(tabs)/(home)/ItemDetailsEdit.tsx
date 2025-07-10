@@ -20,7 +20,7 @@ import PocketBase from 'pocketbase';
 
 import {Item} from "@/components/pages/home/types";
 
-const pb = new PocketBase('http://192.168.25.89:8090');
+const pb = new PocketBase(process.env.EXPO_PUBLIC_LOCAL_API_URL);
 
 // A component for handling editable fields, designed to be visually clean
 const EditableField = ({label, value, icon, onSave, keyboardType = 'default', placeholder}: {
