@@ -1,7 +1,15 @@
 import React, {useCallback, useContext, useState} from 'react';
-import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+    ActivityIndicator,
+    RefreshControl,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {Feather} from '@expo/vector-icons'; // Using Expo for icons
-
 import ExpirationStatusBar from "@/components/pages/home/ExpirationStatusBar";
 import ExpiringHorizontalList from "@/components/pages/home/ExpiringHorizontalList";
 import InventoryList from "@/components/pages/home/InventoryList";
@@ -17,7 +25,7 @@ const HomeScreen = () => {
     if (!context) {
         throw new Error('[Inventory] Inventory context not found');
     }
-    const { items, isLoading, error, fetchItems } = context;
+    const {items, isLoading, error, fetchItems} = context;
 
     const [refreshing, setRefreshing] = useState(false);
     const [activeStatusTab, setActiveStatusTab] = useState('Critical');
@@ -34,7 +42,8 @@ const HomeScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false}
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
                 {/* --- HEADER --- */}
                 <View style={styles.header}>
                     <Text style={styles.headerDate}>{new Date().toLocaleDateString('en-US', {
@@ -47,7 +56,7 @@ const HomeScreen = () => {
                 </View>
 
                 {/* --- RENDER LOADING OR ERROR STATE --- */}
-                {isLoading ? (
+                {isLoading && !refreshing ? (
                     <View style={styles.centered}>
                         <ActivityIndicator size="large" color="#4CAF50"/>
                         <Text style={styles.infoText}>Loading Inventory...</Text>
