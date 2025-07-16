@@ -1,5 +1,4 @@
 import React, {useEffect, useRef} from 'react';
-import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
 import {Platform, StatusBar as RNStatusBar, StyleSheet, View} from "react-native";
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
 import {useFonts} from 'expo-font';
@@ -7,8 +6,6 @@ import {Stack, useRouter} from 'expo-router';
 import 'react-native-reanimated';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-
-import {useColorScheme} from '@/hooks/useColorScheme';
 
 // Determines how the app behaves when a notification is received while it's in the foreground.
 Notifications.setNotificationHandler({
@@ -59,7 +56,6 @@ async function registerForPushNotificationsAsync(): Promise<string | undefined> 
 }
 
 export default function RootLayout() {
-    const colorScheme = useColorScheme();
     const [loaded] = useFonts({
         SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     });
@@ -107,7 +103,6 @@ export default function RootLayout() {
 
     return (
         <View style={styles.container}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                 <Stack>
                     <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
                     <Stack.Screen
@@ -127,7 +122,6 @@ export default function RootLayout() {
                     />
                 </Stack>
                 <ExpoStatusBar style="auto"/>
-            </ThemeProvider>
         </View>
     );
 }

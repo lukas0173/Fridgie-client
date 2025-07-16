@@ -1,111 +1,37 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Feather} from '@expo/vector-icons'; // Using Expo for icons
-import PocketBase, {ListResult, RecordModel} from 'pocketbase';
-import {useFocusEffect} from "expo-router";
 
 import ExpirationStatusBar from "@/components/pages/home/ExpirationStatusBar";
 import ExpiringHorizontalList from "@/components/pages/home/ExpiringHorizontalList";
 import InventoryList from "@/components/pages/home/InventoryList";
-import {Item} from "@/components/pages/home/types";
+import {InventoryContext} from "@/context/InventoryContext";
 
 import * as catppuccinColors from '@/constants/colors/catppuccin-palette.json'
-import {calculateDaysUntilExpiry} from "@/components/utils/date";
-
-
-const pb = new PocketBase(process.env.EXPO_PUBLIC_LOCAL_API_URL);
-
-const getExpiryInfo = (expiryDateString: string): { daysLeft: number, text: string } => {
-    const diffTime = calculateDaysUntilExpiry(expiryDateString)
-
-    if (diffTime < 0) {
-        return {daysLeft: diffTime, text: 'Expired'};
-    }
-    if (diffTime === 0) {
-        return {daysLeft: 0, text: 'Today'};
-    }
-    if (diffTime === 1) {
-        return {daysLeft: 1, text: 'Tomorrow'};
-    }
-    return {daysLeft: diffTime, text: `${diffTime} days`};
-};
 
 // The main (home) Screen Component
 const HomeScreen = () => {
-    // State for storing items, loading status, and errors
-    const [allItems, setAllItems] = useState<Item[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    console.log(InventoryContext)
+    const context = useContext(InventoryContext);
+
+    // Throw an error if the context is not found
+    if (!context) {
+        throw new Error('[Inventory] Inventory context not found');
+    }
+    const { items, isLoading, error, fetchItems } = context;
+
     const [refreshing, setRefreshing] = useState(false);
     const [activeStatusTab, setActiveStatusTab] = useState('Critical');
 
-    // --- Data Fetching Logic ---
-    const fetchItems = async () => {
-        try {
-            setError(null);
-            const records: ListResult<RecordModel> = await pb.collection('items').getList(1, 50, {
-                sort: '-created',
-                expand: 'image',
-            });
-
-            const formattedItems: Item[] = records.items.map((record: any): Item => { // Use 'any' for simplicity with expand
-                const { daysLeft, text } = getExpiryInfo(record.expiry);
-
-                let status: Item['status'] = 'Neutral';
-                if (daysLeft < 0) status = 'Outdated';
-                else if (daysLeft <= 2) status = 'Critical';
-                else if (daysLeft <= 7) status = 'Warning';
-
-                // Now, build the image URL from the expanded data
-                let imageUrl = null;
-                if (record.expand && record.expand.image) {
-                    const imageRecord = record.expand.image;
-                    // getFileUrl needs the record the file belongs to (imageRecord) and the filename (imageRecord.image)
-                    imageUrl = pb.getFileUrl(imageRecord, imageRecord.image);
-                }
-
-                return {
-                    id: record.id,
-                    name: record.name,
-                    category: record.category,
-                    quantity: record.quantity,
-                    status: status,
-                    dayAdded: new Date(record.created).toLocaleDateString('en-GB'),
-                    dayExpired: new Date(record.expiry).toLocaleDateString('en-GB'),
-                    expiry: text,
-                    image: imageUrl,
-                    used: record.used,
-                };
-            });
-
-            setAllItems(formattedItems);
-
-        } catch (e: any) {
-            console.error(e);
-            setError("Failed to fetch items. Please check your connection and pull to refresh.");
-        } finally {
-            setIsLoading(false);
-            setRefreshing(false);
-        }
-    };
-
-    // --- Fetch data when the screen comes into focus ---
-    useFocusEffect(
-        useCallback(() => {
-            setIsLoading(true); // Show loader when screen is focused
-            fetchItems();
-        }, [])
-    );
-
-    // --- Handler for pull-to-refresh ---
-    const onRefresh = useCallback(() => {
+    // Handler for pull-to-refresh
+    const onRefresh = useCallback(async () => {
         setRefreshing(true);
-        fetchItems();
-    }, []);
+        await fetchItems();
+        setRefreshing(false);
+    }, [fetchItems]);
 
-    // --- Filter items for the top horizontal list ---
-    // Show items that are Critical or a Warning
-    const expiringItems = allItems.filter(item => item.status === activeStatusTab);
+    // Filter items for the top horizontal list
+    const expiringItems = items.filter(item => item.status === activeStatusTab);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -117,8 +43,8 @@ const HomeScreen = () => {
                         day: 'numeric'
                     })}</Text>
                     <TouchableOpacity>
-                    <Feather name="search" size={24} color="#333"/>
-                </TouchableOpacity>
+                        <Feather name="search" size={24} color="#333"/>
+                    </TouchableOpacity>
                 </View>
 
                 {/* --- RENDER LOADING OR ERROR STATE --- */}
@@ -140,7 +66,7 @@ const HomeScreen = () => {
                         <ExpiringHorizontalList items={expiringItems} activeStatusTab={activeStatusTab}/>
 
                         {/* --- INVENTORY SECTION --- */}
-                        <InventoryList items={allItems}/>
+                        <InventoryList items={items}/>
                     </>
                 )}
             </ScrollView>
