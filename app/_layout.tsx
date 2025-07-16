@@ -18,7 +18,7 @@ Notifications.setNotificationHandler({
     }),
 });
 
-// --- Helper Function to Register for Push Notifications ---
+// Helper Function to Register for Push Notifications
 async function registerForPushNotificationsAsync(): Promise<string | undefined> {
     let token;
 
@@ -43,10 +43,8 @@ async function registerForPushNotificationsAsync(): Promise<string | undefined> 
             alert('Failed to get push token! Please enable notifications in your device settings.');
             return;
         }
-        // --- ACTION REQUIRED ---
-        // Get your Expo Project ID from your app.json or app.config.js
-        token = (await Notifications.getExpoPushTokenAsync({projectId: '20af2623-14a1-4b24-8299-0ee52e00416d'})).data;
-        console.log(token)
+
+        token = (await Notifications.getExpoPushTokenAsync({projectId: process.env.EXPO_PUBLIC_PROJECT_ID})).data;
         console.log("This get called")
     } else {
         alert('Must use physical device for Push Notifications.');
@@ -61,22 +59,20 @@ export default function RootLayout() {
     });
 
     const router = useRouter();
-    const responseListener = useRef<Notifications.Subscription>(null);
+    const responseListener = useRef<Notifications.EventSubscription>(null);
 
     useEffect(() => {
-        // This function will run and log your token to the console.
+        // This function will run and log the token to the console.
         registerForPushNotificationsAsync().then(token => {
             if (token) {
-                // The token will be printed here for you to copy.
                 console.log('Your Expo Push Token:', token);
             }
         });
 
-        // 2. This listener is fired whenever a user taps on or interacts with a notification
+        // This listener is fired whenever a user taps on or interacts with a notification
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
             console.log('Notification Tapped. Response:', response);
 
-            // --- FIX: Explicitly type the data payload ---
             // This ensures TypeScript knows that imageRecordId and imageUrl are strings.
             const data = response.notification.request.content.data as { imageRecordId: string, imageUrl: string };
 
@@ -91,10 +87,10 @@ export default function RootLayout() {
         // Cleanup listeners when the component unmounts
         return () => {
             if (responseListener.current) {
-                Notifications.removeNotificationSubscription(responseListener.current);
+                responseListener.current.remove()
             }
         };
-    }, []);
+    }, [router]);
 
     if (!loaded) {
         // Async font loading only occurs in development.
@@ -103,25 +99,25 @@ export default function RootLayout() {
 
     return (
         <View style={styles.container}>
-                <Stack>
-                    <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                    <Stack.Screen
-                        name="scan/index"
-                        options={{
-                            presentation: 'modal',
-                            headerShown: false,
-                        }}
-                    />
-                    {/* Add the new screen to the stack navigator */}
-                    <Stack.Screen
-                        name="add/AddScannedItem"
-                        options={{
-                            presentation: 'modal',
-                            headerTitle: 'Add Scanned Item',
-                        }}
-                    />
-                </Stack>
-                <ExpoStatusBar style="auto"/>
+            <Stack>
+                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                <Stack.Screen
+                    name="scan/index"
+                    options={{
+                        presentation: 'modal',
+                        headerShown: false,
+                    }}
+                />
+                {/* Add the new screen to the stack navigator */}
+                <Stack.Screen
+                    name="add/AddScannedItem"
+                    options={{
+                        presentation: 'modal',
+                        headerTitle: 'Add Scanned Item',
+                    }}
+                />
+            </Stack>
+            <ExpoStatusBar style="auto"/>
         </View>
     );
 }

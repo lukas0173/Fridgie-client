@@ -11,7 +11,6 @@ import * as catppuccinColors from '@/constants/colors/catppuccin-palette.json'
 
 // The main (home) Screen Component
 const HomeScreen = () => {
-    console.log(InventoryContext)
     const context = useContext(InventoryContext);
 
     // Throw an error if the context is not found
