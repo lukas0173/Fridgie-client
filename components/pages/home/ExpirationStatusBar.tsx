@@ -1,6 +1,8 @@
 import React from 'react'
 import {StyleSheet, View, TouchableOpacity, Text} from 'react-native'
 
+import * as colors from "@/constants/colors/catppuccin-palette.json"
+
 const TabExpirationOptions = ({activeStatusTab, target, setActiveStatusTab}: {
     activeStatusTab: string,
     target: string,
@@ -32,7 +34,7 @@ export default ExpirationStatusBar
 const styles = StyleSheet.create({
     statusTabsContainer: {
         flexDirection: 'row',
-        backgroundColor: '#E0E0E0',
+        backgroundColor: colors.latte.colors.crust.hex,
         borderRadius: 8,
         overflow: 'hidden',
     },
@@ -44,7 +46,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     activeStatusTab: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: colors.latte.colors.base.hex,
         borderRadius: 8,
         margin: 2,
         shadowColor: '#000',
@@ -54,10 +56,10 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     statusTabText: {
-        color: '#666',
+        color: colors.latte.colors.text.hex,
         fontWeight: '600',
     },
     activeStatusTabText: {
-        color: '#333',
+        color: colors.latte.colors.text.hex,
     },
 })

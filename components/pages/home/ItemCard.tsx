@@ -3,6 +3,7 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useRouter} from "expo-router";
 import {Ionicons} from "@expo/vector-icons";
 import {Item} from "@/components/pages/home/types";
+import * as colors from "@/constants/colors/catppuccin-palette.json"
 
 // A reusable component for each item in the lists
 const ItemCard = ({item}: { item: Item }) => {
@@ -22,7 +23,7 @@ const ItemCard = ({item}: { item: Item }) => {
             {item.image ? (
                 <Image source={{uri: item.image}} style={styles.image} resizeMode="cover"/>
             ) : (
-                <Ionicons name="pint-outline" size={32} color="#8A8A8D"/>
+                <Ionicons name="pint-outline" size={32} color={colors.latte.colors.subtext0.hex}/>
             )}
         </View>
         <Text style={styles.itemName}>{item.name}</Text>
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
         width: 100,
     },
     itemIconBackground: {
-        backgroundColor: '#E8E8E8',
+        backgroundColor: colors.latte.colors.surface0.hex,
         borderRadius: 12,
         width: 80,
         height: 80,
@@ -50,12 +51,12 @@ const styles = StyleSheet.create({
         overflow: 'hidden'
     },
     itemName: {
-        color: '#333',
+        color: colors.latte.colors.text.hex,
         fontWeight: '500',
         textAlign: 'center',
     },
     itemExpiry: {
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext1.hex,
         fontSize: 12,
     },
     image: {

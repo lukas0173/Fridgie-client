@@ -4,6 +4,7 @@ import {Ionicons} from "@expo/vector-icons";
 
 import {Item} from "@/components/pages/home/types";
 import ItemCard from "@/components/pages/home/ItemCard";
+import * as colors from '@/constants/colors/catppuccin-palette.json'
 
 const ExpiringHorizontalList = ({items, activeStatusTab}: { items: Item[], activeStatusTab: any }) => {
 // Don't render anything if there are no items for the selected filter
@@ -22,7 +23,7 @@ const ExpiringHorizontalList = ({items, activeStatusTab}: { items: Item[], activ
             <View style={styles.expiringHeader}>
                 <Text style={styles.expiringTitle}>{title}</Text>
                 <View style={styles.expiringTime}>
-                    <Ionicons name="time-outline" size={16} color="#8A8A8D"/>
+                    <Ionicons name="time-outline" size={16} color={colors.latte.colors.subtext1.hex}/>
                     <Text
                         style={styles.expiringTimeText}>{activeStatusTab === "Critical" ? "1-3 days" : activeStatusTab === "Warning" ? "3-7 days" : "Expired"}</Text>
                 </View>
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     expiringTitle: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#333',
+        color: colors.latte.colors.subtext1.hex,
     },
     expiringTime: {
         flexDirection: 'row',
@@ -59,10 +60,10 @@ const styles = StyleSheet.create({
     },
     expiringTimeText: {
         marginLeft: 5,
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext1.hex,
     },
     noItemsText: {
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext1.hex,
         textAlign: 'center',
         marginTop: 20,
     }

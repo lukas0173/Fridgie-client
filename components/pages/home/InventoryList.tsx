@@ -3,6 +3,7 @@ import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native
 
 import ItemCard from "@/components/pages/home/ItemCard";
 import {Item} from "@/components/pages/home/types"
+import * as colors from "@/constants/colors/catppuccin-palette.json"
 
 const inventoryCategories = ['All', 'Canned/Packed', 'Fruits/Vegetables', 'Cooked Food'];
 
@@ -52,28 +53,28 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#333',
+        color: colors.latte.colors.text.hex,
         marginBottom: 15,
     },
     categoryScroll: {
         marginBottom: 20,
     },
     categoryChip: {
-        backgroundColor: '#E0E0E0',
+        backgroundColor: colors.latte.colors.crust.hex,
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 20,
         marginRight: 10,
     },
     activeCategoryChip: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: colors.latte.colors.green.hex
     },
     categoryChipText: {
-        color: '#333',
+        color: colors.latte.colors.text.hex,
         fontWeight: '500',
     },
     activeCategoryChipText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
     },
     inventoryGrid: {
         flexDirection: 'row',

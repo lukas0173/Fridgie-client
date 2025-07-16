@@ -46,3 +46,7 @@ __generated__
 
 # Google service credentials
 google-services.json
+
+# Misc
+colorFinding.sh
+colorsLog
