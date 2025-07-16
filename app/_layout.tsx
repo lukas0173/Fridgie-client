@@ -45,7 +45,6 @@ async function registerForPushNotificationsAsync(): Promise<string | undefined> 
         }
 
         token = (await Notifications.getExpoPushTokenAsync({projectId: process.env.EXPO_PUBLIC_PROJECT_ID})).data;
-        console.log("This get called")
     } else {
         alert('Must use physical device for Push Notifications.');
     }

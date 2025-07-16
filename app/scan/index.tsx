@@ -4,6 +4,8 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+import * as colors from "@/constants/colors/catppuccin-palette.json"
+
 export default function BarcodeScannerScreen() {
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
@@ -139,7 +141,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     scanAgainButton: {
-        backgroundColor: "#4CAF50",
+        backgroundColor: colors.latte.colors.green.hex,
         borderRadius: 10,
         paddingVertical: 10,
         paddingHorizontal: 20,

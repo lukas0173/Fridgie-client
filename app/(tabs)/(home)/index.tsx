@@ -15,7 +15,7 @@ import ExpiringHorizontalList from "@/components/pages/home/ExpiringHorizontalLi
 import InventoryList from "@/components/pages/home/InventoryList";
 import {InventoryContext} from "@/context/InventoryContext";
 
-import * as catppuccinColors from '@/constants/colors/catppuccin-palette.json'
+import * as colors from '@/constants/colors/catppuccin-palette.json'
 
 // The main (home) Screen Component
 const HomeScreen = () => {
@@ -51,14 +51,14 @@ const HomeScreen = () => {
                         day: 'numeric'
                     })}</Text>
                     <TouchableOpacity>
-                        <Feather name="search" size={24} color="#333"/>
+                        <Feather name="search" size={24} color={colors.latte.colors.text.hex}/>
                     </TouchableOpacity>
                 </View>
 
                 {/* --- RENDER LOADING OR ERROR STATE --- */}
                 {isLoading && !refreshing ? (
                     <View style={styles.centered}>
-                        <ActivityIndicator size="large" color="#4CAF50"/>
+                        <ActivityIndicator size="large" color={colors.latte.colors.green.hex}/>
                         <Text style={styles.infoText}>Loading Inventory...</Text>
                     </View>
                 ) : error ? (
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
         flex: 1,
-        backgroundColor: catppuccinColors.latte.colors.base.hex,
+        backgroundColor: colors.latte.colors.base.hex,
     },
     header: {
         flexDirection: 'row',
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     headerDate: {
         fontSize: 34,
         fontWeight: 'bold',
-        color: catppuccinColors.latte.colors.text.hex,
+        color: colors.latte.colors.text.hex,
     },
     centered: {
         flex: 1,
@@ -109,11 +109,11 @@ const styles = StyleSheet.create({
     },
     infoText: {
         marginTop: 10,
-        color: catppuccinColors.latte.colors.text.hex,
+        color: colors.latte.colors.text.hex,
         fontSize: 16,
     },
     errorText: {
-        color: catppuccinColors.latte.colors.red.hex,
+        color: colors.latte.colors.red.hex,
         fontSize: 16,
         textAlign: 'center',
     }

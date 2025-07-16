@@ -19,6 +19,8 @@ import * as ImagePicker from 'expo-image-picker';
 import PocketBase from 'pocketbase';
 
 import {Item} from "@/components/pages/home/types";
+import * as colors from "@/constants/colors/catppuccin-palette.json"
+import getStatusStyle from "@/components/utils/statusStyle";
 
 const pb = new PocketBase(process.env.EXPO_PUBLIC_LOCAL_API_URL);
 
@@ -69,7 +71,7 @@ const EditableField = ({label, value, icon, onSave, keyboardType = 'default', pl
                 <Text style={styles.detailValue}>{currentValue}</Text>
             )}
             <TouchableOpacity onPress={handleEditToggle} style={styles.editIcon}>
-                <MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D"/>
+                <MaterialCommunityIcons name="pencil-outline" size={24} color={colors.latte.colors.subtext0.hex}/>
             </TouchableOpacity>
         </View>
     );
@@ -122,7 +124,7 @@ const EditItemScreen = () => {
     // --- Image Picker Logic ---
     const handlePickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
+        if (!permissionResult.granted) {
             Alert.alert("Permission Required", "You need to allow access to your photos to upload an image.");
             return;
         }
@@ -202,20 +204,6 @@ const EditItemScreen = () => {
     // Determine which image to show: new, existing, or none.
     const imageSource = newImageUri ? {uri: newImageUri} : (item.image ? {uri: item.image} : null);
 
-    const getStatusStyle = (status: Item['status']) => {
-        switch (status) {
-            case 'Critical':
-                return {backgroundColor: '#E53935'};
-            case 'Warning':
-                return {backgroundColor: '#FFA726'};
-            case 'Neutral':
-                return {backgroundColor: '#4CAF50'};
-            case 'Outdated':
-                return {backgroundColor: '#757575'};
-            default:
-                return {backgroundColor: '#4CAF50'};
-        }
-    };
 
 
     return (
@@ -241,11 +229,11 @@ const EditItemScreen = () => {
                             <TouchableOpacity style={styles.imageOverlay} onPress={handlePickImage}>
                                 {imageSource ? (
                                     <View style={[styles.addImageButton, styles.editImageButton]}>
-                                        <MaterialCommunityIcons name="pencil" size={32} color="#FFFFFF"/>
+                                        <MaterialCommunityIcons name="pencil" size={32} color={colors.latte.colors.base.hex}/>
                                     </View>
                                 ) : (
                                     <View style={styles.addImageButton}>
-                                        <Ionicons name="add" size={48} color="#FFFFFF"/>
+                                        <Ionicons name="add" size={48} color={colors.latte.colors.base.hex}/>
                                     </View>
                                 )}
                             </TouchableOpacity>
@@ -268,20 +256,20 @@ const EditItemScreen = () => {
                             <EditableField
                                 label="Day expired"
                                 value={item.dayExpired}
-                                icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
+                                icon={<Ionicons name="time-outline" size={24} color={colors.latte.colors.subtext0.hex}/>}
                                 onSave={(newValue) => handleFieldSave('dayExpired', String(newValue))}
                                 placeholder="YYYY-MM-DD"
                             />
                             <EditableField
                                 label="Category"
                                 value={item.category}
-                                icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D"/>}
+                                icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color={colors.latte.colors.subtext0.hex}/>}
                                 onSave={(newValue) => handleFieldSave('category', String(newValue))}
                             />
                             <EditableField
                                 label="Quantity"
                                 value={item.quantity}
-                                icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D"/>}
+                                icon={<MaterialCommunityIcons name="counter" size={24} color={colors.latte.colors.subtext0.hex}/>}
                                 onSave={(newValue) => handleFieldSave('quantity', newValue)}
                                 keyboardType="numeric"
                             />
@@ -292,7 +280,7 @@ const EditItemScreen = () => {
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity style={styles.button} onPress={handleSaveChanges} disabled={isLoading}>
                                 {isLoading ? (
-                                    <ActivityIndicator color="#FFFFFF"/>
+                                    <ActivityIndicator color={colors.latte.colors.base.hex}/>
                                 ) : (
                                     <Text style={styles.buttonText}>Save Changes</Text>
                                 )}
@@ -308,7 +296,7 @@ const EditItemScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F0F2F5',
+        backgroundColor: colors.latte.colors.base.hex,
         paddingTop: Platform.OS === 'android' ? 25 : 50,
     },
     keyboardAvoidingContainer: {
@@ -323,8 +311,6 @@ const styles = StyleSheet.create({
     imageContainer: {
         width: "100%",
         aspectRatio: 1,
-        backgroundColor: '#E8E8E8',
-        borderRadius: 24,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10,
@@ -334,12 +320,13 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         position: 'absolute',
+        borderRadius: 24,
     },
     addImageButton: {
         width: 72,
         height: 72,
         borderRadius: 36,
-        backgroundColor: '#4CAF50',
+        backgroundColor: colors.latte.colors.green.hex,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 5,
@@ -353,7 +340,7 @@ const styles = StyleSheet.create({
     itemNameInput: {
         fontSize: 30,
         fontWeight: 'bold',
-        color: '#333',
+        color: colors.latte.colors.text.hex,
         flex: 1,
         marginRight: 10,
     },
@@ -363,7 +350,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     statusText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
         fontWeight: '600',
         fontSize: 14,
     },
@@ -383,19 +370,19 @@ const styles = StyleSheet.create({
     },
     detailLabel: {
         fontSize: 16,
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext0.hex,
         flex: 1,
     },
     detailValue: {
         fontSize: 16,
-        color: '#333',
+        color: colors.latte.colors.text.hex,
         fontWeight: '500',
         textAlign: 'right',
     },
     textInput: {
         flex: 1,
         fontSize: 16,
-        color: '#333',
+        color: colors.latte.colors.subtext0.hex,
         fontWeight: '500',
         textAlign: 'right',
         paddingVertical: 0, // Remove extra padding for better alignment
@@ -413,11 +400,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4CAF50',
+        backgroundColor: colors.latte.colors.green.hex,
         elevation: 4,
     },
     buttonText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
         fontSize: 18,
         fontWeight: 'bold',
     },
