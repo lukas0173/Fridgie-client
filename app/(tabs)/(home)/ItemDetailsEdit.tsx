@@ -163,7 +163,7 @@ const EditItemScreen = () => {
         let updatedImageRelationId = imageRelationId;
 
         try {
-            // Step 1: If a new image was picked, upload it to 'item_images' collection.
+            // If a new image was picked, upload it to 'item_images' collection.
             if (newImageUri) {
                 const formData = new FormData();
                 formData.append('image', {
@@ -177,7 +177,7 @@ const EditItemScreen = () => {
                 updatedImageRelationId = createdImageRecord.id;
             }
 
-            // Step 2: Prepare the data to update the main 'items' record.
+            // Prepare the data to update the main 'items' record.
             const dataToUpdate = {
                 "name": item.name,
                 "category": item.category,
@@ -187,7 +187,7 @@ const EditItemScreen = () => {
                 "image": updatedImageRelationId,
             };
 
-            // Step 3: Update the 'items' record using its ID.
+            // Update the 'items' record using its ID.
             await pb.collection('items').update(item.id, dataToUpdate);
 
             Alert.alert('Success', 'Item updated successfully!');

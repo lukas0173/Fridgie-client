@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, ScrollVi
 import { Stack } from 'expo-router';
 import { Ionicons, Feather} from '@expo/vector-icons';
 
+import * as colors from "@/constants/colors/catppuccin-palette.json"
+
 // Reusable component for section headers
 const SectionHeader = ({ title }: { title: string }) => (
     <Text style={styles.sectionHeaderText}>{title}</Text>
@@ -18,7 +20,7 @@ const SettingsRow = ({ icon, title, subtitle, onPress }: { icon: React.ReactNode
             <Text style={styles.rowTitle}>{title}</Text>
             {subtitle && <Text style={styles.rowSubtitle}>{subtitle}</Text>}
         </View>
-        <Feather name="chevron-right" size={24} color="#BDBDBD" />
+        <Feather name="chevron-right" size={24} color={colors.latte.colors.overlay0.hex} />
     </TouchableOpacity>
 );
 
@@ -41,7 +43,7 @@ const SettingsScreen = () => {
                 <View style={styles.settingsListContainer}>
                     {/* Language Setting */}
                     <SettingsRow
-                        icon={<Ionicons name="language-outline" size={24} color="#555" />}
+                        icon={<Ionicons name="language-outline" size={24} color={colors.latte.colors.subtext0.hex} />}
                         title="Language"
                         subtitle="English"
                         onPress={() => { /* Handle press */ }}
@@ -50,13 +52,13 @@ const SettingsScreen = () => {
                     {/* User Settings */}
                     <SectionHeader title="User" />
                     <SettingsRow
-                        icon={<Feather name="edit-2" size={24} color="#555" />}
+                        icon={<Feather name="edit-2" size={24} color={colors.latte.colors.subtext0.hex} />}
                         title="Username & Email"
                         subtitle="Tuan Kiet - vuwin24680@gmail.com"
                         onPress={() => { /* Handle press */ }}
                     />
                     <SettingsRow
-                        icon={<Ionicons name="person-circle-outline" size={24} color="#555" />}
+                        icon={<Ionicons name="person-circle-outline" size={24} color={colors.latte.colors.subtext0.hex} />}
                         title="Profile Picture"
                         onPress={() => { /* Handle press */ }}
                     />
@@ -64,7 +66,7 @@ const SettingsScreen = () => {
                     {/* Notification Settings */}
                     <SectionHeader title="Notification" />
                     <SettingsRow
-                        icon={<Ionicons name="notifications-outline" size={24} color="#555" />}
+                        icon={<Ionicons name="notifications-outline" size={24} color={colors.latte.colors.subtext0.hex} />}
                         title="Customization"
                         onPress={() => { /* Handle press */ }}
                     />
@@ -83,7 +85,7 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F0F2F5',
+        backgroundColor: colors.latte.colors.base.hex,
     },
     contentContainer: {
         paddingHorizontal: 20,
@@ -103,11 +105,11 @@ const styles = StyleSheet.create({
     profileName: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#333',
+        color: colors.latte.colors.text.hex,
     },
     profileEmail: {
         fontSize: 16,
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext0.hex,
         marginTop: 4,
     },
     settingsListContainer: {
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
     sectionHeaderText: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext0.hex,
         marginBottom: 10,
         textTransform: 'uppercase',
     },
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 12,
-        backgroundColor: '#E8E8E8',
+        backgroundColor: colors.latte.colors.mantle.hex,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 15,
@@ -149,22 +151,22 @@ const styles = StyleSheet.create({
     rowTitle: {
         fontSize: 16,
         fontWeight: '500',
-        color: '#333',
+        color: colors.latte.colors.text.hex,
     },
     rowSubtitle: {
         fontSize: 12,
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext0.hex,
         marginTop: 2,
     },
     logoutButton: {
-        backgroundColor: '#E53935',
+        backgroundColor: colors.latte.colors.red.hex,
         borderRadius: 14,
         paddingVertical: 18,
         alignItems: 'center',
         marginTop: 30,
     },
     logoutButtonText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
         fontSize: 18,
         fontWeight: 'bold',
     },

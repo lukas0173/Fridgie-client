@@ -3,6 +3,8 @@ import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'rea
 import {router, Stack, useLocalSearchParams} from 'expo-router';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {Item} from '@/components/pages/home/types';
+import getStatusStyle from "@/components/utils/statusStyle";
+import * as colors from "@/constants/colors/catppuccin-palette.json"
 
 // Helper component for each row in the details list
 const DetailRow = ({icon, label, value}: { icon: React.ReactNode; label: string; value: string | number }) => (
@@ -42,24 +44,8 @@ const ItemDetailsScreen = () => {
         );
     }
 
-    // Determine the color of the status badge based on the item's status
-    const getStatusStyle = (status: Item['status']) => {
-        switch (status) {
-            case 'Critical':
-                return {backgroundColor: '#E53935'}; // Red
-            case 'Warning':
-                return {backgroundColor: '#FFA726'}; // Orange
-            case 'Neutral':
-                return {backgroundColor: '#4CAF50'}; // Green
-            case 'Outdated':
-                return {backgroundColor: '#757575'}; // Grey
-            default:
-                return {backgroundColor: '#4CAF50'}; // Default to green
-        }
-    };
-
     const getUsedStatusStyle = (isUsed: boolean) => {
-        return { backgroundColor: isUsed ? '#333333' : '#666666' };
+        return { backgroundColor: isUsed ? colors.latte.colors.green.hex : colors.latte.colors.overlay2.hex };
     };
 
     return (
@@ -70,7 +56,7 @@ const ItemDetailsScreen = () => {
                     {item.image ? (
                         <Image source={{uri: item.image}} style={styles.image} resizeMode="cover"/>
                     ) : (
-                        <Ionicons name="pint-outline" size={128} color="#BDBDBD"/>
+                        <Ionicons name="pint-outline" size={128} color={colors.latte.colors.subtext0.hex}/>
                     )}
                 </View>
                 {/* Item Name and Status */}
@@ -92,22 +78,22 @@ const ItemDetailsScreen = () => {
                 {/* Item Details List */}
                 <View style={styles.detailsContainer}>
                     <DetailRow
-                        icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
+                        icon={<Ionicons name="time-outline" size={24} color={colors.latte.colors.subtext0.hex}/>}
                         label="Day added"
                         value={item.dayAdded}
                     />
                     <DetailRow
-                        icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
+                        icon={<Ionicons name="time-outline" size={24} color={colors.latte.colors.subtext0.hex}/>}
                         label="Day expired"
                         value={item.dayExpired}
                     />
                     <DetailRow
-                        icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D"/>}
+                        icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color={colors.latte.colors.subtext0.hex}/>}
                         label="Category"
                         value={item.category}
                     />
                     <DetailRow
-                        icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D"/>}
+                        icon={<MaterialCommunityIcons name="counter" size={24} color={colors.latte.colors.subtext0.hex}/>}
                         label="Quantity"
                         value={item.quantity}
                     />
@@ -134,7 +120,7 @@ const ItemDetailsScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F0F2F5',
+        backgroundColor: colors.latte.colors.base.hex,
         paddingTop: 50,
     },
     mainContent: {
@@ -143,7 +129,6 @@ const styles = StyleSheet.create({
     imageContainer: {
         width: "100%",
         aspectRatio: 1,
-        backgroundColor: '#E8E8E8',
         borderRadius: 24,
         justifyContent: 'center',
         alignItems: 'center',
@@ -164,7 +149,7 @@ const styles = StyleSheet.create({
     itemName: {
         fontSize: 30,
         fontWeight: 'bold',
-        color: '#333',
+        color: colors.latte.colors.text.hex,
         flex: 1,
         marginRight: 10,
     },
@@ -178,7 +163,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     statusText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
         fontWeight: '600',
         fontSize: 14,
     },
@@ -194,12 +179,12 @@ const styles = StyleSheet.create({
     },
     detailLabel: {
         fontSize: 16,
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext0.hex,
         flex: 1,
     },
     detailValue: {
         fontSize: 16,
-        color: '#333',
+        color: colors.latte.colors.text.hex,
         fontWeight: '500',
     },
     buttonContainer: {
@@ -208,7 +193,6 @@ const styles = StyleSheet.create({
         paddingBottom: 30, // More padding from bottom
         paddingTop: 10,
         gap: 15,
-        backgroundColor: '#F0F2F5',
     },
     button: {
         paddingVertical: 10,
@@ -225,13 +209,13 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     editButton: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: colors.latte.colors.green.hex,
     },
     deleteButton: {
-        backgroundColor: '#c72c41',
+        backgroundColor: colors.latte.colors.red.hex,
     },
     buttonText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
         fontSize: 18,
         fontWeight: 'bold',
     },

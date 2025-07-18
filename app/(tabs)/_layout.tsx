@@ -4,6 +4,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Feather, Ionicons} from "@expo/vector-icons";
 
 import {IconSymbol} from '@/components/ui/IconSymbol';
+import * as colors from '@/constants/colors/catppuccin-palette.json'
 
 // --- Custom Tab Bar Component ---
 const CustomTabBar = ({state, descriptors, navigation}: any) => {
@@ -58,9 +59,9 @@ const CustomTabBar = ({state, descriptors, navigation}: any) => {
                             <Ionicons
                                 name={label === 'home' ? (isFocused ? 'home' : 'home-outline') : (isFocused ? 'settings' : 'settings-outline')}
                                 size={26}
-                                color={isFocused ? '#4CAF50' : '#8A8A8D'}
+                                color={isFocused ? colors.latte.colors.green.hex: colors.latte.colors.subtext0.hex}
                             />
-                            <Text style={{color: isFocused ? '#4CAF50' : '#8A8A8D', fontSize: 12}}>
+                            <Text style={{color: isFocused ? colors.latte.colors.green.hex: colors.latte.colors.subtext0.hex, fontSize: 12}}>
                                 {label}
                             </Text>
                         </TouchableOpacity>
@@ -76,7 +77,7 @@ const CustomTabBar = ({state, descriptors, navigation}: any) => {
                     router.push("/add")
                 }}
             >
-                <Feather name="plus" size={32} color="#FFF"/>
+                <Feather name="plus" size={32} color={colors.latte.colors.base.hex}/>
             </TouchableOpacity>
         </View>
     );
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         backgroundColor: '#FFFFFF',
         borderTopWidth: 1,
-        borderTopColor: '#EFEFEF',
+        borderTopColor: colors.latte.colors.mantle.hex,
         paddingTop: 10,
     },
     navButton: {
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 30,
-        backgroundColor: '#4CAF50',
+        backgroundColor: colors.latte.colors.green.hex,
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: '#000',

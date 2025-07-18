@@ -15,8 +15,10 @@ import {
 } from 'react-native';
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router';
 import PocketBase from 'pocketbase';
-import {MaterialCommunityIcons} from "@expo/vector-icons";
+import {Ionicons} from "@expo/vector-icons";
+
 import {calculateDaysUntilExpiry} from "@/components/utils/date";
+import * as colors from "@/constants/colors/catppuccin-palette.json"
 
 // Initialize PocketBase
 const pb = new PocketBase(process.env.EXPO_PUBLIC_LOCAL_API_URL);
@@ -143,13 +145,14 @@ const AddScannedItemScreen = () => {
                         {/* Header Text */}
                         <View style={styles.header}>
                             <Text style={styles.headerTitle}>Complete Your Item</Text>
-                            <Text style={styles.headerSubtitle}>Fill in the details for the item you just scanned.</Text>
+                            <Text style={styles.headerSubtitle}>Fill in the details for the item you just
+                                scanned.</Text>
                         </View>
 
                         {/* Image Container */}
                         <View style={styles.imageContainer}>
                             {isImageLoading ? (
-                                <ActivityIndicator size="large" color="#8A8A8D"/>
+                                <ActivityIndicator size="large" color={colors.latte.colors.green.hex}/>
                             ) : displayImageUrl ? (
                                 <Image
                                     source={{uri: displayImageUrl}}
@@ -159,7 +162,7 @@ const AddScannedItemScreen = () => {
                                 />
                             ) : (
                                 <View style={styles.imagePlaceholder}>
-                                    <MaterialCommunityIcons name="image-off" size={60} color="#8A8A8D"/>
+                                    <Ionicons name="image-outline" size={60} color={colors.latte.colors.subtext0.hex}/>
                                     <Text style={styles.imagePlaceholderText}>Image not available</Text>
                                 </View>
                             )}
@@ -172,14 +175,14 @@ const AddScannedItemScreen = () => {
                                 placeholder="Item Name (e.g., 'Tomato Soup')"
                                 value={formData.name}
                                 onChangeText={(val) => handleInputChange('name', val)}
-                                placeholderTextColor="#999"
+                                placeholderTextColor={colors.latte.colors.overlay0.hex}
                             />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Category (e.g., 'Canned Goods')"
                                 value={formData.category}
                                 onChangeText={(val) => handleInputChange('category', val)}
-                                placeholderTextColor="#999"
+                                placeholderTextColor={colors.latte.colors.overlay0.hex}
                             />
                             <TextInput
                                 style={styles.input}
@@ -187,14 +190,14 @@ const AddScannedItemScreen = () => {
                                 value={formData.quantity}
                                 onChangeText={(val) => handleInputChange('quantity', val)}
                                 keyboardType="numeric"
-                                placeholderTextColor="#999"
+                                placeholderTextColor={colors.latte.colors.overlay0.hex}
                             />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Expiry Date (YYYY-MM-DD)"
                                 value={formData.expiry}
                                 onChangeText={(val) => handleInputChange('expiry', val)}
-                                placeholderTextColor="#999"
+                                placeholderTextColor={colors.latte.colors.overlay0.hex}
                             />
                         </View>
                     </View>
@@ -207,7 +210,7 @@ const AddScannedItemScreen = () => {
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
-                                <ActivityIndicator color="#FFFFFF"/>
+                                <ActivityIndicator color={colors.latte.colors.base.hex}/>
                             ) : (
                                 <Text style={styles.buttonText}>Add to Inventory</Text>
                             )}
@@ -223,7 +226,7 @@ const AddScannedItemScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F0F2F5',
+        backgroundColor: colors.latte.colors.base.hex,
     },
     keyboardAvoidingContainer: {
         flex: 1,
@@ -242,17 +245,16 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 30,
         fontWeight: 'bold',
-        color: '#333',
+        color: colors.latte.colors.text.hex,
     },
     headerSubtitle: {
         fontSize: 16,
-        color: '#666',
+        color: colors.latte.colors.subtext0.hex,
         marginTop: 4,
     },
     imageContainer: {
         width: "100%",
         aspectRatio: 1,
-        backgroundColor: '#E8E8E8',
         borderRadius: 24,
         justifyContent: 'center',
         alignItems: 'center',
@@ -269,7 +271,7 @@ const styles = StyleSheet.create({
     },
     imagePlaceholderText: {
         marginTop: 8,
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext0.hex,
         fontSize: 16,
     },
     detailsContainer: {
@@ -283,8 +285,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 15,
         borderWidth: 1,
-        borderColor: '#E0E0E0',
-        color: '#333'
+        borderColor: colors.latte.colors.mantle.hex,
+        color: colors.latte.colors.text.hex
     },
     buttonContainer: {
         paddingHorizontal: 20,
@@ -296,9 +298,9 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4CAF50',
-        elevation: 4, // Android shadow
-        shadowColor: '#000', // iOS shadow
+        backgroundColor: colors.latte.colors.green.hex,
+        elevation: 4,
+        shadowColor: '#000',
         shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.2,
         shadowRadius: 4,
@@ -307,7 +309,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#A5D6A7',
     },
     buttonText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
         fontSize: 18,
         fontWeight: 'bold',
     },

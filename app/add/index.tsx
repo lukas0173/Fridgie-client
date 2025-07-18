@@ -17,6 +17,7 @@ import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 import PocketBase from 'pocketbase';
 
 import {Item} from "@/components/pages/home/types";
+import * as colors from "@/constants/colors/catppuccin-palette.json"
 
 const pb = new PocketBase(process.env.EXPO_PUBLIC_LOCAL_API_URL);
 
@@ -132,28 +133,28 @@ const AddItemScreen = () => {
                         style={styles.scanButton}
                         onPress={() => router.push('/scan')}
                     >
-                        <Ionicons name="barcode-outline" size={24} color="#FFFFFF"/>
+                        <Ionicons name="barcode-outline" size={24} color={colors.latte.colors.base.hex}/>
                         <Text style={styles.scanButtonText}>Scan Barcode</Text>
                     </TouchableOpacity>
 
                     <View style={styles.detailsContainer}>
                         <InputRow
                             label="Name"
-                            icon={<MaterialCommunityIcons name="pencil-outline" size={24} color="#8A8A8D"/>}
+                            icon={<MaterialCommunityIcons name="pencil-outline" size={24} color={colors.latte.colors.subtext0.hex}/>}
                             value={item.name}
                             onChangeText={(text) => handleInputChange('name', text)}
                             placeholder="e.g., Canned Tuna"
                         />
                         <InputRow
                             label="Category"
-                            icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color="#8A8A8D"/>}
+                            icon={<MaterialCommunityIcons name="package-variant-closed" size={24} color={colors.latte.colors.subtext0.hex}/>}
                             value={item.category}
                             onChangeText={(text) => handleInputChange('category', text)}
                             placeholder="e.g., Canned Goods"
                         />
                         <InputRow
                             label="Quantity"
-                            icon={<MaterialCommunityIcons name="counter" size={24} color="#8A8A8D"/>}
+                            icon={<MaterialCommunityIcons name="counter" size={24} color={colors.latte.colors.subtext0.hex}/>}
                             value={item.quantity}
                             onChangeText={(text) => handleInputChange('quantity', text)}
                             placeholder="1"
@@ -161,14 +162,14 @@ const AddItemScreen = () => {
                         />
                         <InputRow
                             label="Date Added"
-                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
+                            icon={<Ionicons name="time-outline" size={24} color={colors.latte.colors.subtext0.hex}/>}
                             value={item.dayAdded}
                             onChangeText={(text) => handleInputChange('dayAdded', text)}
                             placeholder="YYYY-MM-DD"
                         />
                         <InputRow
                             label="Expiry Date"
-                            icon={<Ionicons name="time-outline" size={24} color="#8A8A8D"/>}
+                            icon={<Ionicons name="time-outline" size={24} color={colors.latte.colors.subtext0.hex}/>}
                             value={item.dayExpired}
                             onChangeText={(text) => handleInputChange('dayExpired', text)}
                             placeholder="YYYY-MM-DD"
@@ -177,7 +178,7 @@ const AddItemScreen = () => {
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.button} onPress={handleSaveItem} disabled={isLoading}>
                             {isLoading ? (
-                                <ActivityIndicator color="#FFFFFF"/>
+                                <ActivityIndicator color={colors.latte.colors.base.hex}/>
                             ) : (
                                 <Text style={styles.buttonText}>Add Item</Text>
                             )}
@@ -192,7 +193,7 @@ const AddItemScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F0F2F5',
+        backgroundColor: colors.latte.colors.base.hex,
     },
     keyboardAvoidingContainer: {
         flex: 1,
@@ -204,13 +205,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#333',
+        backgroundColor: colors.latte.colors.text.hex,
         paddingVertical: 15,
         borderRadius: 12,
         marginBottom: 24,
     },
     scanButtonText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
         fontSize: 18,
         fontWeight: 'bold',
         marginLeft: 10,
@@ -222,8 +223,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
     },
     detailRowIcon: {
         width: 40,
@@ -231,13 +230,13 @@ const styles = StyleSheet.create({
     },
     detailLabel: {
         fontSize: 16,
-        color: '#8A8A8D',
+        color: colors.latte.colors.subtext0.hex,
         width: 110,
     },
     textInput: {
         flex: 1,
         fontSize: 16,
-        color: '#333',
+        color: colors.latte.colors.text.hex,
         textAlign: 'right',
     },
     buttonContainer: {
@@ -249,11 +248,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4CAF50',
+        backgroundColor: colors.latte.colors.green.hex,
         elevation: 4,
     },
     buttonText: {
-        color: '#FFFFFF',
+        color: colors.latte.colors.base.hex,
         fontSize: 18,
         fontWeight: 'bold',
     },
